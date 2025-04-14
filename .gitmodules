@@ -1,0 +1,3 @@
+[submodule "lib/tycommon"]
+	path = lib/tycommon
+	url = git@github.com:tylibs/tycommon.git
