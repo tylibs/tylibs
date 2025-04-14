@@ -6,7 +6,7 @@ ESP_TARGET := esp32s3
 ## Select the zephyr target/board to build
 ZEPHYR_TARGET := native_sim/native/64
 ## Select the Application
-APP_NAME := hello_world
+APP_NAME := "examples/getting_started/hello_world"
 
 BUILD_DIR := build
 export TYLIBS_PATH := $(HOME)/_dev/clever/components/tylibs
@@ -16,15 +16,15 @@ include tools/make/makefile.mk
 
 # import settings for the used Platform
 ifneq (,$(findstring esp,$(MAKECMDGOALS)))
-APP_DIR := test-apps/esp/${APP_NAME}
+APP_DIR := ${APP_NAME}/esp
 include tools/make/espidf-54.mk
 endif
 ifneq (,$(findstring zephyr,$(MAKECMDGOALS)))
-APP_DIR := test-apps/zephyr/${APP_NAME}
+APP_DIR := ${APP_NAME}/zephyr
 include tools/make/zephyr-410.mk
 endif
 ifneq (,$(findstring linux,$(MAKECMDGOALS)))
-APP_DIR := test-apps/linux/${APP_NAME}
+APP_DIR := ${APP_NAME}/linux
 endif
 
 # ESP-IDF specific targets
