@@ -1,0 +1,25 @@
+tylibs_build_get_property(target TYLIBS_TARGET)
+
+set(srcs)
+set(includes "include")
+set(priv_includes "src/include")
+list(
+  APPEND
+  srcs
+  "src/instance/instance.cpp"
+  "src/common/string.cpp"
+  "src/common/error.cpp"
+  "src/common/exit_code.c"
+  "src/logging/logging.cpp"
+  "src/logging/log.cpp")
+
+if(${target} STREQUAL "linux")
+  list(APPEND srcs "src/platform/linux/logging.c")
+  list(APPEND priv_includes "src/platform/linux/")
+elseif(${target} STREQUAL "esp")
+  list(APPEND srcs "src/platform/esp/logging.c")
+  list(APPEND priv_includes "src/platform/esp/")
+endif()
+
+tylibs_component_register(SRCS ${srcs} INCLUDE_DIRS ${includes}
+                          PRIV_INCLUDE_DIRS ${priv_includes})

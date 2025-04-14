@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(esp-tylibs C CXX ASM)
+project(tylibs C CXX ASM)
 
 if(CMAKE_CURRENT_LIST_DIR STREQUAL CMAKE_SOURCE_DIR)
   message(

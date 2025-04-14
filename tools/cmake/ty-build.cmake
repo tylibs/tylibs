@@ -788,7 +788,7 @@ macro(tylibs_build_process target)
   __ty_build_process_project_includes()
 
   tylibs_build_get_property(tylibs_path TYLIBS_PATH)
-  add_subdirectory(${tylibs_path} ${build_dir}/esp-tylibs)
+  add_subdirectory(${tylibs_path} ${build_dir}/tylibs)
 
   unset(ESP_PLATFORM)
 endmacro()

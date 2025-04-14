@@ -92,7 +92,7 @@ DOWNLOAD_RETRY_COUNT = 3
 URL_PREFIX_MAP_SEPARATOR = ","
 TYLIBS_TOOLS_INSTALL_CMD = os.environ.get("TYLIBS_TOOLS_INSTALL_CMD")
 TYLIBS_TOOLS_EXPORT_CMD = os.environ.get("TYLIBS_TOOLS_INSTALL_CMD")
-TYLIBS_DL_URL = "https://dl.espressif.com/dl/esp-tylibs"
+TYLIBS_DL_URL = "https://dl.espressif.com/dl/tylibs"
 TYLIBS_PIP_WHEELS_URL = os.environ.get(
     "TYLIBS_PIP_WHEELS_URL", "https://dl.espressif.com/pypi"
 )
@@ -197,7 +197,7 @@ def print_hints_on_download_error(err: str) -> None:
     # e.g. "[WinError -2146881269] ASN1 valor de tag inválido encontrado"
     if sys.platform == "win32":
         info(
-            "By downloading and using the offline installer from https://dl.espressif.com/dl/esp-tylibs "
+            "By downloading and using the offline installer from https://dl.espressif.com/dl/tylibs "
             "you might be able to work around this issue."
         )
 
@@ -688,8 +688,8 @@ def rename_with_retry(path_from: str, path_to: str) -> None:
     """
     Sometimes renaming a directory on Windows (randomly?) causes a PermissionError.
     This is confirmed to be a workaround:
-    https://github.com/espressif/esp-tylibs/issues/3819#issuecomment-515167118
-    https://github.com/espressif/esp-tylibs/issues/4063#issuecomment-531490140
+    https://github.com/espressif/tylibs/issues/3819#issuecomment-515167118
+    https://github.com/espressif/tylibs/issues/4063#issuecomment-531490140
     https://stackoverflow.com/a/43046729
     """
     retry_count = 20 if sys.platform.startswith("win") else 1
@@ -1022,7 +1022,7 @@ class TYLIBSTool(object):
         if not cmd[0]:
             # There is no command available, so return early. It seems that
             # within some very strange context empty [''] may actually execute
-            # something https://github.com/espressif/esp-tylibs/issues/11880
+            # something https://github.com/espressif/tylibs/issues/11880
             raise ToolNotFoundError(f"Tool {self.name} not found")
 
         try:
@@ -2132,7 +2132,7 @@ def add_variables_to_deactivate_file(
     args: List[str], new_tylibs_vars: Dict[str, Any]
 ) -> str:
     """
-    Add TYLIBS global variables that need to be removed when the active esp-tylibs environment is deactivated.
+    Add TYLIBS global variables that need to be removed when the active tylibs environment is deactivated.
     """
     if "PATH" in new_tylibs_vars:
         new_tylibs_vars["PATH"] = new_tylibs_vars["PATH"].split(":")[
@@ -2586,7 +2586,7 @@ def action_export(args: Any) -> None:
                     r"\tylibs-exe"
                 ):
                     warn(
-                        "The PATH is not in correct order (tylibs-exe should be before esp-tylibs\\tools)"
+                        "The PATH is not in correct order (tylibs-exe should be before tylibs\\tools)"
                     )
             except ValueError:
                 fatal(
@@ -3534,7 +3534,7 @@ def action_gen_doc(args):  # type: ignore
     print_out("   :trim:")
     print_out("")
 
-    tylibs_gh_url = "https://github.com/espressif/esp-tylibs"
+    tylibs_gh_url = "https://github.com/espressif/tylibs"
     for tool_name, tool_obj in tools_info.items():
         info_url = tool_obj.options.info_url
         if f"{tylibs_gh_url}/tree" in info_url:

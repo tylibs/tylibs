@@ -1,0 +1,27 @@
+#
+# Automatically generated file. DO NOT EDIT.
+# Espressif IoT Development Framework (ESP-IDF) 5.4.0 Project Configuration
+#
+# default:
+CONFIG_TYLIBS_CMAKE=y
+
+#
+# Component config
+#
+
+#
+# Tiny configuration
+#
+# default:
+CONFIG_TY_LOG=y
+# default:
+CONFIG_TY_ASSERTS=y
+CONFIG_TY_LOG_LEVEL_CRIT=y
+# CONFIG_TY_LOG_LEVEL_WARN is not set
+# CONFIG_TY_LOG_LEVEL_NOTE is not set
+# CONFIG_TY_LOG_LEVEL_INFO is not set
+# CONFIG_TY_LOG_LEVEL_DEBG is not set
+# default:
+CONFIG_TY_LOG_LEVEL=1
+# end of Tiny configuration
+# end of Component config
