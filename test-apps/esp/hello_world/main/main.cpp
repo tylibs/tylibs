@@ -7,11 +7,9 @@
  *   TYLiBS simplest example: Hello World
  */
 
-#include <esp_log.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
 #include <ty/instance.h>
 #include <ty/logging.h>
+#include <ty/platform/thread.h>
 #include <ty/platform/toolchain.h>
 
 const char *TAG = "main";
@@ -27,7 +25,7 @@ extern "C" void app_main()
     {
         tyLogInfo("%s", "Hello, World!");
         // next event in 1 second
-        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        tyPlatDelay(1000);
     }
     tyInstanceFinalize(instance);
 }

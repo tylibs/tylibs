@@ -7,11 +7,9 @@
  *   TYLiBS simplest example: Hello World
  */
 
-#include <pthread.h>
-#include <stdio.h>
-#include <unistd.h>
 #include <ty/instance.h>
 #include <ty/logging.h>
+#include <ty/platform/thread.h>
 
 #include "etl/string.h"
 
@@ -27,7 +25,7 @@ extern "C" int main(void)
         tyLogInfo("modul", "%s", hello_world.c_str());
         tyLogCrit("modul", "Critical");
         // next event in 1 second
-        sleep(1);
+        tyPlatDelay(1000);
     }
     tyInstanceFinalize(instance);
     return 0;

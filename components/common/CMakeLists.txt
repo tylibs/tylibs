@@ -14,10 +14,11 @@ list(
   "src/logging/log.cpp")
 
 if(${target} STREQUAL "linux")
-  list(APPEND srcs "src/platform/linux/logging.c")
+  list(APPEND srcs "src/platform/linux/logging.c"
+       "src/platform/linux/thread.cpp")
   list(APPEND priv_includes "src/platform/linux/")
 elseif(${target} STREQUAL "esp")
-  list(APPEND srcs "src/platform/esp/logging.c")
+  list(APPEND srcs "src/platform/esp/logging.c" "src/platform/esp/thread.c")
   list(APPEND priv_includes "src/platform/esp/")
 endif()
 
