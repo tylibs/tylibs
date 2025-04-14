@@ -32,31 +32,6 @@ function(__kconfig_component_init component_target)
 endfunction()
 
 #
-# Add bootloader components Kconfig and Kconfig.projbuild files to
-# BOOTLOADER_KCONFIG and BOOTLOADER_KCONFIGS_PROJ properties respectively.
-#
-function(__kconfig_bootloader_component_add component_dir)
-  tylibs_build_get_property(bootloader_kconfigs BOOTLOADER_KCONFIGS)
-  tylibs_build_get_property(bootloader_kconfigs_proj BOOTLOADER_KCONFIGS_PROJ)
-
-  file(GLOB kconfig "${component_dir}/Kconfig")
-  list(SORT kconfig)
-  if(EXISTS "${kconfig}" AND NOT IS_DIRECTORY "${kconfig}")
-    list(APPEND bootloader_kconfigs "${kconfig}")
-  endif()
-
-  file(GLOB kconfig "${component_dir}/Kconfig.projbuild")
-  list(SORT kconfig)
-  if(EXISTS "${kconfig}" AND NOT IS_DIRECTORY "${kconfig}")
-    list(APPEND bootloader_kconfigs_proj "${kconfig}")
-  endif()
-
-  tylibs_build_set_property(BOOTLOADER_KCONFIGS "${bootloader_kconfigs}")
-  tylibs_build_set_property(BOOTLOADER_KCONFIGS_PROJ
-                            "${bootloader_kconfigs_proj}")
-endfunction()
-
-#
 # Find the initial TYLIBS version used to generate the config. This is needed to
 # pass this variable back to confgen, so that the value of
 # CONFIG_TYLIBS_INIT_VERSION option stays the same.

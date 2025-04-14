@@ -1,0 +1,18 @@
+mainmenu "TYLiBS Framework Configuration"
+
+config TYLIBS_CMAKE
+       bool
+       default "y"
+
+source "$COMPONENT_KCONFIGS_PROJBUILD_SOURCE_FILE"
+
+menu "Component config"
+    comment "!!! MINIMAL_BUILD is enabled !!!"
+    depends on "${TYLIBS_MINIMAL_BUILD}"
+    comment "Only common components and those transitively required by the main component are listed"
+    depends on "${TYLIBS_MINIMAL_BUILD}"
+    comment "If a component configuration is missing, please add it to the main component's requirements"
+    depends on "${TYLIBS_MINIMAL_BUILD}"
+
+    source "$COMPONENT_KCONFIGS_SOURCE_FILE"
+endmenu

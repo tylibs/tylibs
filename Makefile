@@ -73,4 +73,4 @@ linux.build: ## (re)compile
 
 ## Delete build directory
 linux.clean:
-	$(RMDIR) $(BUILD_DIR)
+	$(RMDIR) $(BUILD_DIR) && $(RM) ${APP_DIR}/sdkconfig
