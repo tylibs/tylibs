@@ -15,11 +15,11 @@ function(tylibs_build_get_property var property)
 endfunction()
 
 tylibs_build_get_property(tylibs_path TYLIBS_PATH)
-include(${tylibs_path}/tools/cmake/utilities.cmake)
-include(${tylibs_path}/tools/cmake/version.cmake)
+include(${tylibs_path}/tools/cmake/ty-utilities.cmake)
+include(${tylibs_path}/tools/cmake/ty-version.cmake)
 
-function(__component_get_property var component_target property)
-  set(_property __component_${component_target}_${property})
+function(__ty_component_get_property var component_target property)
+  set(_property __ty_component_${component_target}_${property})
   set(${var}
       ${${_property}}
       PARENT_SCOPE)
@@ -28,8 +28,8 @@ endfunction()
 #
 # Given a component name or alias, get the corresponding component target.
 #
-function(__component_get_target var name_or_alias)
-  tylibs_build_get_property(component_targets __COMPONENT_TARGETS)
+function(__ty_component_get_target var name_or_alias)
+  tylibs_build_get_property(component_targets __TY_COMPONENT_TARGETS)
 
   # Assume first that the parameters is an alias.
   string(REPLACE "::" "_" name_or_alias "${name_or_alias}")
@@ -43,8 +43,8 @@ function(__component_get_target var name_or_alias)
   else() # assumption is wrong, try to look for it manually
     unset(target)
     foreach(component_target ${component_targets})
-      __component_get_property(_component_name ${component_target}
-                               COMPONENT_NAME)
+      __ty_component_get_property(_component_name ${component_target}
+                                  COMPONENT_NAME)
       if(name_or_alias STREQUAL _component_name)
         set(target ${component_target})
         break()
@@ -57,8 +57,8 @@ function(__component_get_target var name_or_alias)
 endfunction()
 
 function(tylibs_component_get_property var component property)
-  __component_get_target(component_target ${component})
-  __component_get_property(_var ${component_target} ${property})
+  __ty_component_get_target(component_target ${component})
+  __ty_component_get_property(_var ${component_target} ${property})
   set(${var}
       ${_var}
       PARENT_SCOPE)
@@ -95,19 +95,19 @@ macro(tylibs_component_register)
       EMBED_TXTFILES)
   cmake_parse_arguments(_ "${options}" "${single_value}" "${multi_value}"
                         "${ARGN}")
-  set(__component_priv_requires "${__PRIV_REQUIRES}")
-  set(__component_requires "${__REQUIRES}")
-  set(__component_kconfig "${__KCONFIG}")
-  set(__component_kconfig_projbuild "${__KCONFIG_PROJBUILD}")
-  set(__component_include_dirs "${__INCLUDE_DIRS}")
-  set(__component_registered 1)
+  set(__ty_component_priv_requires "${__PRIV_REQUIRES}")
+  set(__ty_component_requires "${__REQUIRES}")
+  set(__ty_component_kconfig "${__KCONFIG}")
+  set(__ty_component_kconfig_projbuild "${__KCONFIG_PROJBUILD}")
+  set(__ty_component_include_dirs "${__INCLUDE_DIRS}")
+  set(__ty_component_registered 1)
   return()
 endmacro()
 
 macro(register_component)
-  set(__component_requires "${COMPONENT_REQUIRES}")
-  set(__component_priv_requires "${COMPONENT_PRIV_REQUIRES}")
-  set(__component_registered 1)
+  set(__ty_component_requires "${COMPONENT_REQUIRES}")
+  set(__ty_component_priv_requires "${COMPONENT_PRIV_REQUIRES}")
+  set(__ty_component_registered 1)
   return()
 endmacro()
 
@@ -115,44 +115,45 @@ macro(register_config_only_component)
   register_component()
 endmacro()
 
-tylibs_build_get_property(__common_reqs __COMPONENT_REQUIRES_COMMON)
-tylibs_build_get_property(__component_targets __COMPONENT_TARGETS)
+tylibs_build_get_property(__common_reqs __TY_COMPONENT_REQUIRES_COMMON)
+tylibs_build_get_property(__ty_component_targets __TY_COMPONENT_TARGETS)
 
-function(__component_get_requirements)
+function(__ty_component_get_requirements)
   # This is in a function (separate variable context) so that variables declared
   # and set by the included CMakeLists.txt does not bleed into the next
   # inclusion. We are only interested in the public and private requirements of
   # components
-  __component_get_property(__component_dir ${__component_target} COMPONENT_DIR)
-  __component_get_property(__component_name ${__component_target}
-                           COMPONENT_NAME)
-  set(COMPONENT_NAME ${__component_name})
-  set(COMPONENT_DIR ${__component_dir})
-  set(COMPONENT_PATH ${__component_dir}) # for backward compatibility only,
-                                         # COMPONENT_DIR is preferred
-  include(${__component_dir}/CMakeLists.txt OPTIONAL)
+  __ty_component_get_property(__ty_component_dir ${__ty_component_target}
+                              COMPONENT_DIR)
+  __ty_component_get_property(__ty_component_name ${__ty_component_target}
+                              COMPONENT_NAME)
+  set(COMPONENT_NAME ${__ty_component_name})
+  set(COMPONENT_DIR ${__ty_component_dir})
+  set(COMPONENT_PATH ${__ty_component_dir}) # for backward compatibility only,
+  # COMPONENT_DIR is preferred
+  include(${__ty_component_dir}/CMakeLists.txt OPTIONAL)
 
-  spaces2list(__component_requires)
-  spaces2list(__component_priv_requires)
-  spaces2list(__component_include_dirs)
+  spaces2list(__ty_component_requires)
+  spaces2list(__ty_component_priv_requires)
+  spaces2list(__ty_component_include_dirs)
 
-  set(__component_requires
-      "${__component_requires}"
+  set(__ty_component_requires
+      "${__ty_component_requires}"
       PARENT_SCOPE)
-  set(__component_priv_requires
-      "${__component_priv_requires}"
+  set(__ty_component_priv_requires
+      "${__ty_component_priv_requires}"
       PARENT_SCOPE)
-  set(__component_kconfig
-      "${__component_kconfig}"
+  set(__ty_component_kconfig
+      "${__ty_component_kconfig}"
       PARENT_SCOPE)
-  set(__component_kconfig_projbuild
-      "${__component_kconfig_projbuild}"
+  set(__ty_component_kconfig_projbuild
+      "${__ty_component_kconfig_projbuild}"
       PARENT_SCOPE)
-  set(__component_include_dirs
-      "${__component_include_dirs}"
+  set(__ty_component_include_dirs
+      "${__ty_component_include_dirs}"
       PARENT_SCOPE)
-  set(__component_registered
-      ${__component_registered}
+  set(__ty_component_registered
+      ${__ty_component_registered}
       PARENT_SCOPE)
 endfunction()
 
@@ -164,22 +165,22 @@ set(__TARGETS_PROJECT_MANAGED_COMPONENTS "") # 1
 set(__TARGETS_PROJECT_EXTRA_COMPONENTS "") # 2
 set(__TARGETS_PROJECT_COMPONENTS "") # 3
 
-foreach(__component_target ${__component_targets})
-  __component_get_property(__component_source ${__component_target}
-                           COMPONENT_SOURCE)
+foreach(__ty_component_target ${__ty_component_targets})
+  __ty_component_get_property(__ty_component_source ${__ty_component_target}
+                              COMPONENT_SOURCE)
 
-  if("${__component_source}" STREQUAL "tylibs_components")
-    list(APPEND __TARGETS_TYLIBS_COMPONENTS ${__component_target})
-  elseif("${__component_source}" STREQUAL "project_managed_components")
-    list(APPEND __TARGETS_PROJECT_MANAGED_COMPONENTS ${__component_target})
-  elseif("${__component_source}" STREQUAL "project_extra_components")
-    list(APPEND __TARGETS_PROJECT_EXTRA_COMPONENTS ${__component_target})
-  elseif("${__component_source}" STREQUAL "project_components")
-    list(APPEND __TARGETS_PROJECT_COMPONENTS ${__component_target})
+  if("${__ty_component_source}" STREQUAL "tylibs_components")
+    list(APPEND __TARGETS_TYLIBS_COMPONENTS ${__ty_component_target})
+  elseif("${__ty_component_source}" STREQUAL "project_managed_components")
+    list(APPEND __TARGETS_PROJECT_MANAGED_COMPONENTS ${__ty_component_target})
+  elseif("${__ty_component_source}" STREQUAL "project_extra_components")
+    list(APPEND __TARGETS_PROJECT_EXTRA_COMPONENTS ${__ty_component_target})
+  elseif("${__ty_component_source}" STREQUAL "project_components")
+    list(APPEND __TARGETS_PROJECT_COMPONENTS ${__ty_component_target})
   else()
     message(
       FATAL_ERROR
-        "Unknown component source for component ${__component_target}: ${__component_source}"
+        "Unknown component source for component ${__ty_component_target}: ${__ty_component_source}"
     )
   endif()
 endforeach()
@@ -189,65 +190,65 @@ set(__sorted_component_targets "")
 foreach(__target IN
         LISTS __TARGETS_PROJECT_COMPONENTS __TARGETS_PROJECT_EXTRA_COMPONENTS
               __TARGETS_PROJECT_MANAGED_COMPONENTS __TARGETS_TYLIBS_COMPONENTS)
-  __component_get_property(__component_name ${__target} COMPONENT_NAME)
+  __ty_component_get_property(__ty_component_name ${__target} COMPONENT_NAME)
   list(APPEND __sorted_component_targets ${__target})
 endforeach()
 
-foreach(__component_target ${__sorted_component_targets})
-  set(__component_requires "")
-  set(__component_priv_requires "")
-  set(__component_registered 0)
+foreach(__ty_component_target ${__sorted_component_targets})
+  set(__ty_component_requires "")
+  set(__ty_component_priv_requires "")
+  set(__ty_component_registered 0)
 
-  __component_get_requirements()
+  __ty_component_get_requirements()
 
   # Remove duplicates and the component itself from its requirements
-  __component_get_property(__component_alias ${__component_target}
-                           COMPONENT_ALIAS)
-  __component_get_property(__component_name ${__component_target}
-                           COMPONENT_NAME)
+  __ty_component_get_property(__ty_component_alias ${__ty_component_target}
+                              COMPONENT_ALIAS)
+  __ty_component_get_property(__ty_component_name ${__ty_component_target}
+                              COMPONENT_NAME)
 
   # Prevent component from linking to itself.
-  if(__component_requires)
-    list(REMOVE_DUPLICATES __component_requires)
-    list(REMOVE_ITEM __component_requires ${__component_alias}
-         ${__component_name})
+  if(__ty_component_requires)
+    list(REMOVE_DUPLICATES __ty_component_requires)
+    list(REMOVE_ITEM __ty_component_requires ${__ty_component_alias}
+         ${__ty_component_name})
   endif()
 
-  if(__component_priv_requires)
-    list(REMOVE_DUPLICATES __component_priv_requires)
-    list(REMOVE_ITEM __component_priv_requires ${__component_alias}
-         ${__component_name})
+  if(__ty_component_priv_requires)
+    list(REMOVE_DUPLICATES __ty_component_priv_requires)
+    list(REMOVE_ITEM __ty_component_priv_requires ${__ty_component_alias}
+         ${__ty_component_name})
   endif()
 
-  __component_get_property(__component_source ${__component_target}
-                           COMPONENT_SOURCE)
+  __ty_component_get_property(__ty_component_source ${__ty_component_target}
+                              COMPONENT_SOURCE)
 
   set(__contents
-      "__component_set_property(${__component_target} REQUIRES \"${__component_requires}\")
-__component_set_property(${__component_target} PRIV_REQUIRES \"${__component_priv_requires}\")
-__component_set_property(${__component_target} __COMPONENT_REGISTERED ${__component_registered})
-__component_set_property(${__component_target} INCLUDE_DIRS \"${__component_include_dirs}\")
-__component_set_property(${__component_target} __COMPONENT_SOURCE \"${__component_source}\")"
+      "__ty_component_set_property(${__ty_component_target} REQUIRES \"${__ty_component_requires}\")
+__ty_component_set_property(${__ty_component_target} PRIV_REQUIRES \"${__ty_component_priv_requires}\")
+__ty_component_set_property(${__ty_component_target} __TY_COMPONENT_REGISTERED ${__ty_component_registered})
+__ty_component_set_property(${__ty_component_target} INCLUDE_DIRS \"${__ty_component_include_dirs}\")
+__ty_component_set_property(${__ty_component_target} __TY_COMPONENT_SOURCE \"${__ty_component_source}\")"
   )
 
-  if(__component_kconfig)
-    get_filename_component(__component_kconfig "${__component_kconfig}"
+  if(__ty_component_kconfig)
+    get_filename_component(__ty_component_kconfig "${__ty_component_kconfig}"
                            ABSOLUTE)
     set(__contents
-        "${__contents}\n__component_set_property(${__component_target} KCONFIG \"${__component_kconfig}\")"
+        "${__contents}\n__ty_component_set_property(${__ty_component_target} KCONFIG \"${__ty_component_kconfig}\")"
     )
   endif()
 
-  if(__component_kconfig_projbuild)
-    get_filename_component(__component_kconfig "${__component_kconfig}"
+  if(__ty_component_kconfig_projbuild)
+    get_filename_component(__ty_component_kconfig "${__ty_component_kconfig}"
                            ABSOLUTE)
     set(__contents
-        "${__contents}\n__component_set_property(${__component_target} KCONFIG_PROJBUILD \"${__component_kconfig_projbuild}\")"
+        "${__contents}\n__ty_component_set_property(${__ty_component_target} KCONFIG_PROJBUILD \"${__ty_component_kconfig_projbuild}\")"
     )
   endif()
 
-  set(__component_requires_contents
-      "${__component_requires_contents}\n${__contents}")
+  set(__ty_component_requires_contents
+      "${__ty_component_requires_contents}\n${__contents}")
 endforeach()
 
-file(WRITE ${COMPONENT_REQUIRES_FILE} "${__component_requires_contents}")
+file(WRITE ${COMPONENT_REQUIRES_FILE} "${__ty_component_requires_contents}")

@@ -294,9 +294,9 @@ function(__ty_build_init tylibs_path)
   foreach(component_dir ${component_dirs})
     # A potential component must be a directory
     if(IS_DIRECTORY ${component_dir})
-      __component_dir_quick_check(is_component ${component_dir})
+      __ty_component_dir_quick_check(is_component ${component_dir})
       if(is_component)
-        __component_add(${component_dir} ${prefix} "tylibs_components")
+        __ty_component_add(${component_dir} ${prefix} "tylibs_components")
       endif()
     endif()
   endforeach()
@@ -304,14 +304,14 @@ function(__ty_build_init tylibs_path)
   if("${target}" STREQUAL "linux")
     # set(requires_common freertos esp_hw_support heap log soc hal esp_rom
     # esp_common esp_system linux)
-    # tylibs_build_set_property(__COMPONENT_REQUIRES_COMMON
+    # tylibs_build_set_property(__TY_COMPONENT_REQUIRES_COMMON
     # "${requires_common}")
   else()
     # Set components required by all other components in the build
     #
     # * esp_hw_support is here for backward compatibility set(requires_common
     #   cxx newlib freertos esp_hw_support heap log soc hal esp_rom esp_common
-    #   esp_system) tylibs_build_set_property(__COMPONENT_REQUIRES_COMMON
+    #   esp_system) tylibs_build_set_property(__TY_COMPONENT_REQUIRES_COMMON
     # "${requires_common}")
   endif()
 
@@ -352,7 +352,7 @@ function(tylibs_build_component component_dir)
     message(FATAL_ERROR "Invalid component source '${component_source}'.")
   endif()
 
-  __component_add(${component_dir} ${prefix} ${component_source})
+  __ty_component_add(${component_dir} ${prefix} ${component_source})
 endfunction()
 
 #
@@ -360,23 +360,24 @@ endfunction()
 # component.
 #
 function(__ty_build_resolve_and_add_req var component_target req type)
-  __component_get_target(_req_target ${req})
-  __component_get_property(_component_name ${component_target} COMPONENT_NAME)
+  __ty_component_get_target(_req_target ${req})
+  __ty_component_get_property(_component_name ${component_target}
+                              COMPONENT_NAME)
   if(NOT _req_target)
     message(
       FATAL_ERROR
         "Failed to resolve component '${req}' required by component '${_component_name}': unknown name."
     )
   endif()
-  __component_get_property(_req_registered ${_req_target}
-                           __COMPONENT_REGISTERED)
+  __ty_component_get_property(_req_registered ${_req_target}
+                              __TY_COMPONENT_REGISTERED)
   if(NOT _req_registered)
     message(
       FATAL_ERROR
         "Failed to resolve component '${req}' required by component '${_component_name}': "
         "component not registered.")
   endif()
-  __component_set_property(${component_target} ${type} ${_req_target} APPEND)
+  __ty_component_set_property(${component_target} ${type} ${_req_target} APPEND)
   set(${var}
       ${_req_target}
       PARENT_SCOPE)
@@ -390,15 +391,16 @@ endfunction()
 function(__ty_build_expand_requirements component_target)
   # Since there are circular dependencies, make sure that we do not infinitely
   # expand requirements for each component.
-  tylibs_build_get_property(component_targets_seen __COMPONENT_TARGETS_SEEN)
-  __component_get_property(component_registered ${component_target}
-                           __COMPONENT_REGISTERED)
+  tylibs_build_get_property(component_targets_seen __TY_COMPONENT_TARGETS_SEEN)
+  __ty_component_get_property(component_registered ${component_target}
+                              __TY_COMPONENT_REGISTERED)
   if(component_target IN_LIST component_targets_seen OR NOT
                                                         component_registered)
     return()
   endif()
 
-  tylibs_build_set_property(__COMPONENT_TARGETS_SEEN ${component_target} APPEND)
+  tylibs_build_set_property(__TY_COMPONENT_TARGETS_SEEN ${component_target}
+                            APPEND)
 
   get_property(
     reqs
@@ -408,9 +410,10 @@ function(__ty_build_expand_requirements component_target)
     priv_reqs
     TARGET ${component_target}
     PROPERTY PRIV_REQUIRES)
-  __component_get_property(component_name ${component_target} COMPONENT_NAME)
-  __component_get_property(component_alias ${component_target} COMPONENT_ALIAS)
-  tylibs_build_get_property(common_reqs __COMPONENT_REQUIRES_COMMON)
+  __ty_component_get_property(component_name ${component_target} COMPONENT_NAME)
+  __ty_component_get_property(component_alias ${component_target}
+                              COMPONENT_ALIAS)
+  tylibs_build_get_property(common_reqs __TY_COMPONENT_REQUIRES_COMMON)
   list(APPEND reqs ${common_reqs})
 
   if(reqs)
@@ -438,21 +441,21 @@ function(__ty_build_expand_requirements component_target)
     tylibs_build_set_property(__TY_BUILD_COMPONENT_TARGETS ${component_target}
                               APPEND)
 
-    __component_get_property(component_lib ${component_target} COMPONENT_LIB)
+    __ty_component_get_property(component_lib ${component_target} COMPONENT_LIB)
     tylibs_build_set_property(__TY_BUILD_COMPONENTS ${component_lib} APPEND)
 
     tylibs_build_get_property(prefix __PREFIX)
-    __component_get_property(component_prefix ${component_target} __PREFIX)
+    __ty_component_get_property(component_prefix ${component_target} __PREFIX)
 
-    __component_get_property(component_alias ${component_target}
-                             COMPONENT_ALIAS)
+    __ty_component_get_property(component_alias ${component_target}
+                                COMPONENT_ALIAS)
 
     tylibs_build_set_property(BUILD_COMPONENT_ALIASES ${component_alias} APPEND)
 
     # Only put in the prefix in the name if it is not the default one
     if(component_prefix STREQUAL prefix)
-      __component_get_property(component_name ${component_target}
-                               COMPONENT_NAME)
+      __ty_component_get_property(component_name ${component_target}
+                                  COMPONENT_NAME)
       tylibs_build_set_property(BUILD_COMPONENTS ${component_name} APPEND)
     else()
       tylibs_build_set_property(BUILD_COMPONENTS ${component_alias} APPEND)
@@ -526,8 +529,8 @@ macro(__ty_build_process_project_includes)
 
   # Include each component's project_include.cmake
   foreach(component_target ${build_component_targets})
-    __component_get_property(dir ${component_target} COMPONENT_DIR)
-    __component_get_property(_name ${component_target} COMPONENT_NAME)
+    __ty_component_get_property(dir ${component_target} COMPONENT_DIR)
+    __ty_component_get_property(_name ${component_target} COMPONENT_NAME)
     set(COMPONENT_NAME ${_name})
     set(COMPONENT_DIR ${dir})
     set(COMPONENT_PATH ${dir}) # this is deprecated, users are encouraged to use
@@ -659,17 +662,17 @@ macro(tylibs_build_process target)
     set(__contents "components:\n")
     tylibs_build_get_property(build_component_targets BUILD_COMPONENT_TARGETS)
     foreach(__ty_build_component_target ${build_component_targets})
-      __component_get_property(__component_name ${__ty_build_component_target}
-                               COMPONENT_NAME)
-      __component_get_property(__component_dir ${__ty_build_component_target}
-                               COMPONENT_DIR)
+      __ty_component_get_property(__ty_component_name
+                                  ${__ty_build_component_target} COMPONENT_NAME)
+      __ty_component_get_property(__ty_component_dir
+                                  ${__ty_build_component_target} COMPONENT_DIR)
 
       # Exclude components could be passed with -DEXCLUDE_COMPONENTS after the
-      # call to __component_add finished in the last run. Need to check if the
-      # component is excluded again
-      if(NOT __component_name IN_LIST EXCLUDE_COMPONENTS)
+      # call to __ty_component_add finished in the last run. Need to check if
+      # the component is excluded again
+      if(NOT __ty_component_name IN_LIST EXCLUDE_COMPONENTS)
         set(__contents
-            "${__contents}  - name: \"${__component_name}\"\n    path: \"${__component_dir}\"\n"
+            "${__contents}  - name: \"${__ty_component_name}\"\n    path: \"${__ty_component_dir}\"\n"
         )
       endif()
     endforeach()
@@ -679,7 +682,7 @@ macro(tylibs_build_process target)
     # Call for the component manager to prepare remote dependencies
     tylibs_build_get_property(python PYTHON)
     tylibs_build_get_property(component_manager_interface_version
-                              __COMPONENT_MANAGER_INTERFACE_VERSION)
+                              __TY_COMPONENT_MANAGER_INTERFACE_VERSION)
     tylibs_build_get_property(dependencies_lock_file DEPENDENCIES_LOCK)
 
     execute_process(
@@ -702,7 +705,7 @@ macro(tylibs_build_process target)
     # Add managed components to list of all components `managed_components`
     # contains the list of components installed by the component manager It is
     # defined in the temporary managed_components_list_file file
-    set(__COMPONENTS "${__COMPONENTS};${managed_components}")
+    set(__TY_COMPONENTS "${__TY_COMPONENTS};${managed_components}")
 
     file(REMOVE ${managed_components_list_file})
     file(REMOVE ${local_components_list_file})
@@ -712,21 +715,21 @@ macro(tylibs_build_process target)
       "TYLIBS Component manager was explicitly disabled by setting TYLIBS_COMPONENT_MANAGER=0"
     )
 
-    tylibs_build_get_property(__component_targets __COMPONENT_TARGETS)
-    set(__components_with_manifests "")
-    foreach(__component_target ${__component_targets})
-      __component_get_property(__component_dir ${__component_target}
-                               COMPONENT_DIR)
-      if(EXISTS "${__component_dir}/tylibs_component.yml")
-        set(__components_with_manifests
-            "${__components_with_manifests}\t${__component_dir}\n")
+    tylibs_build_get_property(__ty_component_targets __TY_COMPONENT_TARGETS)
+    set(__ty_components_with_manifests "")
+    foreach(__ty_component_target ${__ty_component_targets})
+      __ty_component_get_property(__ty_component_dir ${__ty_component_target}
+                                  COMPONENT_DIR)
+      if(EXISTS "${__ty_component_dir}/tylibs_component.yml")
+        set(__ty_components_with_manifests
+            "${__ty_components_with_manifests}\t${__ty_component_dir}\n")
       endif()
     endforeach()
 
-    if(NOT "${__components_with_manifests}" STREQUAL "")
+    if(NOT "${__ty_components_with_manifests}" STREQUAL "")
       message(
         NOTICE
-        "\"tylibs_component.yml\" file was found for components:\n${__components_with_manifests}"
+        "\"tylibs_component.yml\" file was found for components:\n${__ty_components_with_manifests}"
         "However, the component manager is not enabled.")
     endif()
   endif()
@@ -735,9 +738,9 @@ macro(tylibs_build_process target)
   # It is here we retrieve the public and private requirements of each
   # component. It is also here we add the common component requirements to each
   # component's own requirements.
-  __component_get_requirements()
+  __ty_component_get_requirements()
 
-  tylibs_build_get_property(component_targets __COMPONENT_TARGETS)
+  tylibs_build_get_property(component_targets __TY_COMPONENT_TARGETS)
 
   # Finally, do component expansion. In this case it simply means getting a
   # final list of build component targets given the requirements set by each
@@ -745,10 +748,10 @@ macro(tylibs_build_process target)
 
   # Check if we need to trim the components first, and build initial components
   # list from that.
-  if(__COMPONENTS)
+  if(__TY_COMPONENTS)
     unset(component_targets)
-    foreach(component ${__COMPONENTS})
-      __component_get_target(component_target ${component})
+    foreach(component ${__TY_COMPONENTS})
+      __ty_component_get_target(component_target ${component})
       if(NOT component_target)
         message(FATAL_ERROR "Failed to resolve component '${component}'.")
       endif()
@@ -759,15 +762,15 @@ macro(tylibs_build_process target)
   foreach(component_target ${component_targets})
     __ty_build_expand_requirements(${component_target})
   endforeach()
-  tylibs_build_unset_property(__COMPONENT_TARGETS_SEEN)
+  tylibs_build_unset_property(__TY_COMPONENT_TARGETS_SEEN)
 
   # Get a list of common component requirements in component targets form
   # (previously we just have a list of component names)
-  tylibs_build_get_property(common_reqs __COMPONENT_REQUIRES_COMMON)
+  tylibs_build_get_property(common_reqs __TY_COMPONENT_REQUIRES_COMMON)
   foreach(common_req ${common_reqs})
-    __component_get_target(component_target ${common_req})
-    __component_get_property(lib ${component_target} COMPONENT_LIB)
-    tylibs_build_set_property(___COMPONENT_REQUIRES_COMMON ${lib} APPEND)
+    __ty_component_get_target(component_target ${common_req})
+    __ty_component_get_property(lib ${component_target} COMPONENT_LIB)
+    tylibs_build_set_property(___TY_COMPONENT_REQUIRES_COMMON ${lib} APPEND)
   endforeach()
 
   # Generate config values in different formats

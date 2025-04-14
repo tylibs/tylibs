@@ -1,7 +1,7 @@
 #
 # Internal function for retrieving component properties from a component target.
 #
-function(__component_get_property var component_target property)
+function(__ty_component_get_property var component_target property)
   get_property(
     val
     TARGET ${component_target}
@@ -15,7 +15,7 @@ endfunction()
 # Internal function for setting component properties on a component target. As
 # with build properties, set properties are also keeped track of.
 #
-function(__component_set_property component_target property val)
+function(__ty_component_set_property component_target property val)
   cmake_parse_arguments(_ "APPEND" "" "" ${ARGN})
 
   if(__APPEND)
@@ -28,26 +28,27 @@ function(__component_set_property component_target property val)
   endif()
 
   # Keep track of set component properties
-  __component_get_property(properties ${component_target}
-                           __COMPONENT_PROPERTIES)
+  __ty_component_get_property(properties ${component_target}
+                              __TY_COMPONENT_PROPERTIES)
   if(NOT property IN_LIST properties)
-    __component_set_property(${component_target} __COMPONENT_PROPERTIES
-                             ${property} APPEND)
+    __ty_component_set_property(${component_target} __TY_COMPONENT_PROPERTIES
+                                ${property} APPEND)
   endif()
 endfunction()
 
 #
 # Given a component name or alias, get the corresponding component target.
 #
-function(__component_get_target var name_or_alias)
+function(__ty_component_get_target var name_or_alias)
   # Look at previously resolved names or aliases
-  tylibs_build_get_property(component_names_resolved __COMPONENT_NAMES_RESOLVED)
+  tylibs_build_get_property(component_names_resolved
+                            __TY_COMPONENT_NAMES_RESOLVED)
   list(FIND component_names_resolved ${name_or_alias} result)
   if(NOT result EQUAL -1)
     # If it has been resolved before, return that value. The index is the same
-    # as in __COMPONENT_NAMES_RESOLVED as these are parallel lists.
+    # as in __TY_COMPONENT_NAMES_RESOLVED as these are parallel lists.
     tylibs_build_get_property(component_targets_resolved
-                              __COMPONENT_TARGETS_RESOLVED)
+                              __TY_COMPONENT_TARGETS_RESOLVED)
     list(GET component_targets_resolved ${result} target)
     set(${var}
         ${target}
@@ -55,7 +56,7 @@ function(__component_get_target var name_or_alias)
     return()
   endif()
 
-  tylibs_build_get_property(component_targets __COMPONENT_TARGETS)
+  tylibs_build_get_property(component_targets __TY_COMPONENT_TARGETS)
 
   # Assume first that the parameters is an alias.
   string(REPLACE "::" "_" name_or_alias "${name_or_alias}")
@@ -69,8 +70,8 @@ function(__component_get_target var name_or_alias)
   else() # assumption is wrong, try to look for it manually
     unset(target)
     foreach(component_target ${component_targets})
-      __component_get_property(_component_name ${component_target}
-                               COMPONENT_NAME)
+      __ty_component_get_property(_component_name ${component_target}
+                                  COMPONENT_NAME)
       if(name_or_alias STREQUAL _component_name)
         set(target ${component_target})
         break()
@@ -83,9 +84,9 @@ function(__component_get_target var name_or_alias)
 
   # Save the resolved name or alias
   if(target)
-    tylibs_build_set_property(__COMPONENT_NAMES_RESOLVED ${name_or_alias}
+    tylibs_build_set_property(__TY_COMPONENT_NAMES_RESOLVED ${name_or_alias}
                               APPEND)
-    tylibs_build_set_property(__COMPONENT_TARGETS_RESOLVED ${target} APPEND)
+    tylibs_build_set_property(__TY_COMPONENT_TARGETS_RESOLVED ${target} APPEND)
   endif()
 endfunction()
 
@@ -93,32 +94,36 @@ endfunction()
 # Called during component registration, sets basic properties of the current
 # component.
 #
-macro(__component_set_properties)
-  __component_get_property(type ${component_target} COMPONENT_TYPE)
+macro(__ty_component_set_properties)
+  __ty_component_get_property(type ${component_target} COMPONENT_TYPE)
 
   # Fill in the rest of component property
-  __component_set_property(${component_target} SRCS "${sources}")
-  __component_set_property(${component_target} INCLUDE_DIRS "${__INCLUDE_DIRS}")
+  __ty_component_set_property(${component_target} SRCS "${sources}")
+  __ty_component_set_property(${component_target} INCLUDE_DIRS
+                              "${__INCLUDE_DIRS}")
 
   if(type STREQUAL LIBRARY)
-    __component_set_property(${component_target} PRIV_INCLUDE_DIRS
-                             "${__PRIV_INCLUDE_DIRS}")
+    __ty_component_set_property(${component_target} PRIV_INCLUDE_DIRS
+                                "${__PRIV_INCLUDE_DIRS}")
   endif()
 
-  __component_set_property(${component_target} LDFRAGMENTS "${__LDFRAGMENTS}")
-  __component_set_property(${component_target} EMBED_FILES "${__EMBED_FILES}")
-  __component_set_property(${component_target} EMBED_TXTFILES
-                           "${__EMBED_TXTFILES}")
-  __component_set_property(${component_target} REQUIRED_TYLIBS_TARGETS
-                           "${__REQUIRED_TYLIBS_TARGETS}")
+  __ty_component_set_property(${component_target} LDFRAGMENTS
+                              "${__LDFRAGMENTS}")
+  __ty_component_set_property(${component_target} EMBED_FILES
+                              "${__EMBED_FILES}")
+  __ty_component_set_property(${component_target} EMBED_TXTFILES
+                              "${__EMBED_TXTFILES}")
+  __ty_component_set_property(${component_target} REQUIRED_TYLIBS_TARGETS
+                              "${__REQUIRED_TYLIBS_TARGETS}")
 
-  __component_set_property(${component_target} WHOLE_ARCHIVE ${__WHOLE_ARCHIVE})
+  __ty_component_set_property(${component_target} WHOLE_ARCHIVE
+                              ${__WHOLE_ARCHIVE})
 endmacro()
 
 #
 # Perform a quick check if given component dir satisfies basic requirements.
 #
-function(__component_dir_quick_check var component_dir)
+function(__ty_component_dir_quick_check var component_dir)
   set(res 1)
   get_filename_component(abs_dir ${component_dir} ABSOLUTE)
 
@@ -148,16 +153,16 @@ endfunction()
 # Write a CMake file containing all component and their properties. This is
 # possible because each component keeps a list of all its properties.
 #
-function(__component_write_properties output_file)
+function(__ty_component_write_properties output_file)
   set(component_properties_text "")
-  tylibs_build_get_property(component_targets __COMPONENT_TARGETS)
+  tylibs_build_get_property(component_targets __TY_COMPONENT_TARGETS)
   foreach(component_target ${component_targets})
-    __component_get_property(component_properties ${component_target}
-                             __COMPONENT_PROPERTIES)
+    __ty_component_get_property(component_properties ${component_target}
+                                __TY_COMPONENT_PROPERTIES)
     foreach(property ${component_properties})
-      __component_get_property(val ${component_target} ${property})
+      __ty_component_get_property(val ${component_target} ${property})
       set(component_properties_text
-          "${component_properties_text}\nset(__component_${component_target}_${property} \"${val}\")"
+          "${component_properties_text}\nset(__ty_component_${component_target}_${property} \"${val}\")"
       )
     endforeach()
   endforeach()
@@ -166,9 +171,9 @@ endfunction()
 
 #
 # Add a component to process in the build. The components are keeped tracked of
-# in property __COMPONENT_TARGETS in component target form.
+# in property __TY_COMPONENT_TARGETS in component target form.
 #
-function(__component_add component_dir prefix component_source)
+function(__ty_component_add component_dir prefix component_source)
   # For each component, two entities are created: a component target and a
   # component library. The component library is created during component
   # registration (the actual static/interface library). On the other hand,
@@ -178,7 +183,7 @@ function(__component_add component_dir prefix component_source)
   # have limitations on the types of properties that can be set on them, so
   # later in the build, these component targets actually contain the properties
   # meant for the corresponding component library.
-  tylibs_build_get_property(component_targets __COMPONENT_TARGETS)
+  tylibs_build_get_property(component_targets __TY_COMPONENT_TARGETS)
   get_filename_component(abs_dir ${component_dir} ABSOLUTE)
   get_filename_component(base_dir ${abs_dir} NAME)
 
@@ -199,10 +204,11 @@ function(__component_add component_dir prefix component_source)
     if(NOT TARGET ${component_target})
       add_library(${component_target} STATIC IMPORTED)
     endif()
-    tylibs_build_set_property(__COMPONENT_TARGETS ${component_target} APPEND)
+    tylibs_build_set_property(__TY_COMPONENT_TARGETS ${component_target} APPEND)
   else()
-    __component_get_property(dir ${component_target} COMPONENT_DIR)
-    __component_set_property(${component_target} COMPONENT_OVERRIDEN_DIR ${dir})
+    __ty_component_get_property(dir ${component_target} COMPONENT_DIR)
+    __ty_component_set_property(${component_target} COMPONENT_OVERRIDEN_DIR
+                                ${dir})
   endif()
 
   set(component_lib __${prefix}_${component_name})
@@ -214,17 +220,20 @@ function(__component_add component_dir prefix component_source)
   # to external targets.
 
   # Set the basic properties of the component
-  __component_set_property(${component_target} COMPONENT_LIB ${component_lib})
-  __component_set_property(${component_target} COMPONENT_NAME ${component_name})
-  __component_set_property(${component_target} COMPONENT_DIR ${component_dir})
-  __component_set_property(${component_target} COMPONENT_ALIAS
-                           ${component_alias})
+  __ty_component_set_property(${component_target} COMPONENT_LIB
+                              ${component_lib})
+  __ty_component_set_property(${component_target} COMPONENT_NAME
+                              ${component_name})
+  __ty_component_set_property(${component_target} COMPONENT_DIR
+                              ${component_dir})
+  __ty_component_set_property(${component_target} COMPONENT_ALIAS
+                              ${component_alias})
   if(component_source)
-    __component_set_property(${component_target} COMPONENT_SOURCE
-                             ${component_source})
+    __ty_component_set_property(${component_target} COMPONENT_SOURCE
+                                ${component_source})
   endif()
 
-  __component_set_property(${component_target} __PREFIX ${prefix})
+  __ty_component_set_property(${component_target} __PREFIX ${prefix})
 
   # Set Kconfig related properties on the component
   __kconfig_component_init(${component_target})
@@ -240,7 +249,7 @@ endfunction()
 # expansion is performed using a separate CMake script (the expansion is
 # performed in a separate instance of CMake in scripting mode).
 #
-function(__component_get_requirements)
+function(__ty_component_get_requirements)
   tylibs_build_get_property(tylibs_path TYLIBS_PATH)
 
   tylibs_build_get_property(build_dir BUILD_DIR)
@@ -249,7 +258,7 @@ function(__component_get_requirements)
   set(component_requires_file ${build_dir}/component_requires.temp.cmake)
 
   __ty_build_write_properties(${build_properties_file})
-  __component_write_properties(${component_properties_file})
+  __ty_component_write_properties(${component_properties_file})
 
   execute_process(
     COMMAND
@@ -269,7 +278,7 @@ function(__component_get_requirements)
   if(tylibs_component_manager EQUAL 1)
     tylibs_build_get_property(python PYTHON)
     tylibs_build_get_property(component_manager_interface_version
-                              __COMPONENT_MANAGER_INTERFACE_VERSION)
+                              __TY_COMPONENT_MANAGER_INTERFACE_VERSION)
 
     # Call for the component manager once again to inject dependencies It
     # modifies the requirements file generated by
@@ -300,12 +309,12 @@ function(__component_get_requirements)
   file(REMOVE ${component_requires_file})
 endfunction()
 
-# __component_add_sources, __component_check_target,
-# __component_add_include_dirs
+# __ty_component_add_sources, __ty_component_check_target,
+# __ty_component_add_include_dirs
 #
 # Utility macros for component registration. Adds source files and checks target
 # requirements, and adds include directories respectively.
-macro(__component_add_sources sources)
+macro(__ty_component_add_sources sources)
   set(sources "")
   if(__SRCS)
     if(__SRC_DIRS)
@@ -353,7 +362,7 @@ macro(__component_add_sources sources)
   list(REMOVE_DUPLICATES sources)
 endmacro()
 
-macro(__component_add_include_dirs lib dirs type)
+macro(__ty_component_add_include_dirs lib dirs type)
   foreach(dir ${dirs})
     get_filename_component(_dir ${dir} ABSOLUTE BASE_DIR
                            ${CMAKE_CURRENT_LIST_DIR})
@@ -364,7 +373,7 @@ macro(__component_add_include_dirs lib dirs type)
   endforeach()
 endmacro()
 
-macro(__component_check_target)
+macro(__ty_component_check_target)
   if(__REQUIRED_TYLIBS_TARGETS)
     tylibs_build_get_property(tylibs_target TYLIBS_TARGET)
     if(NOT tylibs_target IN_LIST __REQUIRED_TYLIBS_TARGETS)
@@ -376,13 +385,13 @@ macro(__component_check_target)
   endif()
 endmacro()
 
-# __component_set_dependencies, __component_set_all_dependencies
+# __ty_component_set_dependencies, __ty_component_set_all_dependencies
 #
 # Links public and private requirements for the currently processed component
-macro(__component_set_dependencies reqs type)
+macro(__ty_component_set_dependencies reqs type)
   foreach(req ${reqs})
     if(req IN_LIST build_component_targets)
-      __component_get_property(req_lib ${req} COMPONENT_LIB)
+      __ty_component_get_property(req_lib ${req} COMPONENT_LIB)
       if("${type}" STREQUAL "PRIVATE")
         set_property(
           TARGET ${component_lib}
@@ -411,20 +420,20 @@ macro(__component_set_dependencies reqs type)
   endforeach()
 endmacro()
 
-macro(__component_set_all_dependencies)
-  __component_get_property(type ${component_target} COMPONENT_TYPE)
+macro(__ty_component_set_all_dependencies)
+  __ty_component_get_property(type ${component_target} COMPONENT_TYPE)
   tylibs_build_get_property(build_component_targets
                             __TY_BUILD_COMPONENT_TARGETS)
 
   if(NOT type STREQUAL CONFIG_ONLY)
-    __component_get_property(reqs ${component_target} __REQUIRES)
-    __component_set_dependencies("${reqs}" PUBLIC)
+    __ty_component_get_property(reqs ${component_target} __REQUIRES)
+    __ty_component_set_dependencies("${reqs}" PUBLIC)
 
-    __component_get_property(priv_reqs ${component_target} __PRIV_REQUIRES)
-    __component_set_dependencies("${priv_reqs}" PRIVATE)
+    __ty_component_get_property(priv_reqs ${component_target} __PRIV_REQUIRES)
+    __ty_component_set_dependencies("${priv_reqs}" PRIVATE)
   else()
-    __component_get_property(reqs ${component_target} __REQUIRES)
-    __component_set_dependencies("${reqs}" INTERFACE)
+    __ty_component_get_property(reqs ${component_target} __REQUIRES)
+    __ty_component_set_dependencies("${reqs}" INTERFACE)
   endif()
 endmacro()
 
@@ -440,14 +449,14 @@ endmacro()
 # expression for the property instead of actual value
 function(tylibs_component_get_property var component property)
   cmake_parse_arguments(_ "GENERATOR_EXPRESSION" "" "" ${ARGN})
-  __component_get_target(component_target ${component})
+  __ty_component_get_target(component_target ${component})
   if("${component_target}" STREQUAL "")
     message(FATAL_ERROR "Failed to resolve component '${component}'")
   else()
     if(__GENERATOR_EXPRESSION)
       set(val "$<TARGET_PROPERTY:${component_target},${property}>")
     else()
-      __component_get_property(val ${component_target} ${property})
+      __ty_component_get_property(val ${component_target} ${property})
     endif()
   endif()
   set(${var}
@@ -469,15 +478,15 @@ endfunction()
 # the property instead of replacing it
 function(tylibs_component_set_property component property val)
   cmake_parse_arguments(_ "APPEND" "" "" ${ARGN})
-  __component_get_target(component_target ${component})
+  __ty_component_get_target(component_target ${component})
   if(NOT component_target)
     message(FATAL_ERROR "Failed to resolve component '${component}'")
   endif()
 
   if(__APPEND)
-    __component_set_property(${component_target} ${property} "${val}" APPEND)
+    __ty_component_set_property(${component_target} ${property} "${val}" APPEND)
   else()
-    __component_set_property(${component_target} ${property} "${val}")
+    __ty_component_set_property(${component_target} ${property} "${val}")
   endif()
 endfunction()
 
@@ -530,8 +539,8 @@ function(tylibs_component_register)
         "Called tylibs_component_register from a non-component directory.")
   endif()
 
-  __component_check_target()
-  __component_add_sources(sources)
+  __ty_component_check_target()
+  __ty_component_add_sources(sources)
 
   # Add component manifest to the list of dependencies
   set_property(
@@ -541,8 +550,8 @@ function(tylibs_component_register)
 
   # Create the final target for the component. This target is the target that is
   # visible outside the build system.
-  __component_get_target(component_target ${COMPONENT_ALIAS})
-  __component_get_property(component_lib ${component_target} COMPONENT_LIB)
+  __ty_component_get_target(component_target ${COMPONENT_ALIAS})
+  __ty_component_get_property(component_lib ${component_target} COMPONENT_LIB)
 
   # Use generator expression so that users can append/override flags even after
   # call to tylibs_build_process
@@ -558,7 +567,7 @@ function(tylibs_component_register)
                             GENERATOR_EXPRESSION)
   tylibs_build_get_property(asm_compile_options ASM_COMPILE_OPTIONS
                             GENERATOR_EXPRESSION)
-  tylibs_build_get_property(common_reqs ___COMPONENT_REQUIRES_COMMON)
+  tylibs_build_get_property(common_reqs ___TY_COMPONENT_REQUIRES_COMMON)
 
   include_directories("${include_directories}")
   add_compile_options("${compile_options}")
@@ -575,30 +584,32 @@ function(tylibs_component_register)
 
   tylibs_build_get_property(config_dir CONFIG_DIR)
 
-  # The contents of 'sources' is from the __component_add_sources call
+  # The contents of 'sources' is from the __ty_component_add_sources call
   if(sources
      OR __EMBED_FILES
      OR __EMBED_TXTFILES)
     add_library(${component_lib} STATIC ${sources})
-    __component_set_property(${component_target} COMPONENT_TYPE LIBRARY)
-    __component_add_include_dirs(${component_lib} "${__INCLUDE_DIRS}" PUBLIC)
-    __component_add_include_dirs(${component_lib} "${__PRIV_INCLUDE_DIRS}"
-                                 PRIVATE)
-    __component_add_include_dirs(${component_lib} "${config_dir}" PUBLIC)
+    __ty_component_set_property(${component_target} COMPONENT_TYPE LIBRARY)
+    __ty_component_add_include_dirs(${component_lib} "${__INCLUDE_DIRS}" PUBLIC)
+    __ty_component_add_include_dirs(${component_lib} "${__PRIV_INCLUDE_DIRS}"
+                                    PRIVATE)
+    __ty_component_add_include_dirs(${component_lib} "${config_dir}" PUBLIC)
     set_target_properties(
       ${component_lib} PROPERTIES OUTPUT_NAME ${COMPONENT_NAME} LINKER_LANGUAGE
                                                                 C)
     # __ldgen_add_component(${component_lib})
   else()
     add_library(${component_lib} INTERFACE)
-    __component_set_property(${component_target} COMPONENT_TYPE CONFIG_ONLY)
-    __component_add_include_dirs(${component_lib} "${__INCLUDE_DIRS}" INTERFACE)
-    __component_add_include_dirs(${component_lib} "${config_dir}" INTERFACE)
+    __ty_component_set_property(${component_target} COMPONENT_TYPE CONFIG_ONLY)
+    __ty_component_add_include_dirs(${component_lib} "${__INCLUDE_DIRS}"
+                                    INTERFACE)
+    __ty_component_add_include_dirs(${component_lib} "${config_dir}" INTERFACE)
   endif()
 
   # Alias the static/interface library created for linking to external targets.
   # The alias is the <prefix>::<component name> name.
-  __component_get_property(component_alias ${component_target} COMPONENT_ALIAS)
+  __ty_component_get_property(component_alias ${component_target}
+                              COMPONENT_ALIAS)
   add_library(${component_alias} ALIAS ${component_lib})
 
   # Perform other component processing, such as embedding binaries and
@@ -616,7 +627,7 @@ function(tylibs_component_register)
   endif()
 
   # Set dependencies
-  __component_set_all_dependencies()
+  __ty_component_set_all_dependencies()
 
   # Make the COMPONENT_LIB variable available in the component CMakeLists.txt
   set(COMPONENT_LIB
@@ -628,7 +639,7 @@ function(tylibs_component_register)
       ${component_lib}
       PARENT_SCOPE)
 
-  __component_set_properties()
+  __ty_component_set_properties()
 endfunction()
 
 # tylibs_component_mock
@@ -806,7 +817,7 @@ endmacro()
 # components.
 function(require_tylibs_targets)
   set(__REQUIRED_TYLIBS_TARGETS "${ARGN}")
-  __component_check_target()
+  __ty_component_check_target()
 endfunction()
 
 # register_config_only_component

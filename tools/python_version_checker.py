@@ -35,7 +35,7 @@ def is_supported():  # type: () -> bool
 def check():  # type: () -> None
     if not is_supported():
         raise RuntimeError(
-            "ESP-TYLIBS supports Python {} or newer but you are using Python {}. Please upgrade your "
+            "TYLIBS supports Python {} or newer but you are using Python {}. Please upgrade your "
             "installation as described in the documentation.".format(
                 _ver_to_str(OLDEST_PYTHON_SUPPORTED), _ver_to_str(sys.version_info[:3])
             )

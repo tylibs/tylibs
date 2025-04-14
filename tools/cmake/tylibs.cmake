@@ -1,5 +1,5 @@
-get_property(__idf_env_set GLOBAL PROPERTY __IDF_ENV_SET)
-if(NOT __idf_env_set)
+get_property(__tylibs_env_set GLOBAL PROPERTY __TYLIBS_ENV_SET)
+if(NOT __tylibs_env_set)
   # Infer an TYLIBS_PATH relative to the cmake directory
   get_filename_component(_tylibs_path "${CMAKE_CURRENT_LIST_DIR}/../.."
                          REALPATH)
@@ -35,22 +35,21 @@ if(NOT __idf_env_set)
       "${tylibs_path}/tools/cmake" "${tylibs_path}/tools/cmake/third_party"
       ${CMAKE_MODULE_PATH})
 
-  include(build)
+  include(ty-build)
 
   set(TYLIBS_PATH ${tylibs_path})
 
-  include(utilities)
   include(GetGitRevisionDescription)
   include(CheckCCompilerFlag)
   include(CheckCXXCompilerFlag)
-  include(git_submodules)
-  include(ldgen)
-  include(prefix_map)
-  include(depgraph)
-  include(kconfig)
-  include(component)
+  include(ty-utilities)
+  include(ty-git_submodules)
+  include(ty-prefix_map)
+  include(ty-depgraph)
+  include(ty-kconfig)
+  include(ty-component)
 
-  __build_init("${tylibs_path}")
+  __ty_build_init("${tylibs_path}")
 
   set_property(GLOBAL PROPERTY __TYLIBS_ENV_SET 1)
 endif()

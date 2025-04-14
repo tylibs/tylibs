@@ -14,21 +14,22 @@ endfunction()
 # that all basic properties of the components have been set prior to calling it.
 #
 function(__kconfig_component_init component_target)
-  __component_get_property(component_dir ${component_target} COMPONENT_DIR)
+  __ty_component_get_property(component_dir ${component_target} COMPONENT_DIR)
   file(GLOB kconfig "${component_dir}/Kconfig")
   list(SORT kconfig)
-  __component_set_property(${component_target} KCONFIG "${kconfig}")
+  __ty_component_set_property(${component_target} KCONFIG "${kconfig}")
   file(GLOB kconfig "${component_dir}/Kconfig.projbuild")
   list(SORT kconfig)
-  __component_set_property(${component_target} KCONFIG_PROJBUILD "${kconfig}")
+  __ty_component_set_property(${component_target} KCONFIG_PROJBUILD
+                              "${kconfig}")
   file(GLOB sdkconfig_rename "${component_dir}/sdkconfig.rename")
   file(GLOB sdkconfig_rename_target
        "${component_dir}/sdkconfig.rename.${TYLIBS_TARGET}")
 
   list(APPEND sdkconfig_rename ${sdkconfig_rename_target})
   list(SORT sdkconfig_rename)
-  __component_set_property(${component_target} SDKCONFIG_RENAME
-                           "${sdkconfig_rename}")
+  __ty_component_set_property(${component_target} SDKCONFIG_RENAME
+                              "${sdkconfig_rename}")
 endfunction()
 
 #
@@ -69,16 +70,16 @@ endfunction()
 #
 function(__kconfig_generate_config sdkconfig sdkconfig_defaults)
   # List all Kconfig and Kconfig.projbuild in known components
-  tylibs_build_get_property(component_targets __COMPONENT_TARGETS)
+  tylibs_build_get_property(component_targets __TY_COMPONENT_TARGETS)
   tylibs_build_get_property(build_component_targets
                             __TY_BUILD_COMPONENT_TARGETS)
   foreach(component_target ${component_targets})
     if(component_target IN_LIST build_component_targets)
-      __component_get_property(kconfig ${component_target} KCONFIG)
-      __component_get_property(kconfig_projbuild ${component_target}
-                               KCONFIG_PROJBUILD)
-      __component_get_property(sdkconfig_rename ${component_target}
-                               SDKCONFIG_RENAME)
+      __ty_component_get_property(kconfig ${component_target} KCONFIG)
+      __ty_component_get_property(kconfig_projbuild ${component_target}
+                                  KCONFIG_PROJBUILD)
+      __ty_component_get_property(sdkconfig_rename ${component_target}
+                                  SDKCONFIG_RENAME)
       if(kconfig)
         list(APPEND kconfigs ${kconfig})
       endif()

@@ -35,7 +35,7 @@ esp: esp.clean esp.build ## clean and build for the selected TARGET
 
 esp.build: ## (re)compile for the selected TARGET
 	@echo "Building for ${var1}"
-	${IDFPY} -C ${APP_DIR} -B ${BUILD_DIR} -DIDF_TARGET=${ESP_TARGET} build size -l
+	${IDFPY} -C ${APP_DIR} -B ${BUILD_DIR} -DIDF_TARGET=${ESP_TARGET} -DTY_PYTHON_DEPS_CHECKED=1 build size -l
 
 esp.flash: esp.build ## Flash the firmware to ESP32
 	${IDFPY} -C ${APP_DIR} -B ${BUILD_DIR} flash
@@ -47,7 +47,7 @@ esp.clean:
 ## Build the firmware for host execution (Linux only)
 ## This will start the monitor
 esp.linux:
-	${IDFPY} -C ${APP_DIR} -B ${BUILD_DIR} --preview set-target linux build monitor
+	${IDFPY} -C ${APP_DIR} -B ${BUILD_DIR}  -DTY_PYTHON_DEPS_CHECKED=1 --preview set-target linux build monitor
 
 # Zephyr specific targets
 # ---------------------------------------------------------------------------
@@ -69,7 +69,7 @@ zephyr.clean:
 linux: linux.clean linux.build ## clean and build
 
 linux.build: ## (re)compile
-	cmake -S ${APP_DIR} -B ${BUILD_DIR} -DPYTHON_DEPS_CHECKED=1 && cmake --build ${BUILD_DIR} -- -j
+	cmake -S ${APP_DIR} -B ${BUILD_DIR} -DTY_PYTHON_DEPS_CHECKED=1 && cmake --build ${BUILD_DIR} -- -j
 
 ## Delete build directory
 linux.clean:

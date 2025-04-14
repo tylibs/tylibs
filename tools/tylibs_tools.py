@@ -4,7 +4,7 @@
 # SPDX-FileCopyrightText: Copyright 2025 Clever Design (Switzerland) GmbH
 # SPDX-License-Identifier: Apache-2.0
 #
-# This script helps installing tools required to use the ESP-TYLIBS, and updating PATH
+# This script helps installing tools required to use the TYLIBS, and updating PATH
 # to use the installed tools. It can also create a Python virtual environment,
 # and install Python requirements into it.
 #  It does not install OS dependencies. It does install tools such as the Xtensa
@@ -82,7 +82,7 @@ TOOLS_SCHEMA_FILE = "tools/tools_schema.json"
 TOOLS_FILE_NEW = "tools/tools.new.json"
 TYLIBS_ENV_FILE = "tylibs-env.json"
 TOOLS_FILE_VERSION = 2
-TYLIBS_TOOLS_PATH_DEFAULT = os.path.join("~", ".espressif")
+TYLIBS_TOOLS_PATH_DEFAULT = os.path.join("~", ".tylibs")
 UNKNOWN_VERSION = "unknown"
 SUBST_TOOL_PATH_REGEX = re.compile(r"\${TOOL_PATH}")
 VERSION_REGEX_REPLACE_DEFAULT = r"\1"
@@ -273,7 +273,7 @@ class Platforms:
         "Linux-arm": PLATFORM_LINUX_ARM32,
     }
 
-    # List of platforms that are not supported by ESP-TYLIBS
+    # List of platforms that are not supported by TYLIBS
     UNSUPPORTED_PLATFORMS = ["Linux-armv6l"]
 
     @staticmethod
@@ -330,9 +330,7 @@ class Platforms:
             raise ValueError("System platform could not be identified.")
 
         if platform_alias in Platforms.UNSUPPORTED_PLATFORMS:
-            raise ValueError(
-                f"Platform '{platform_alias}' is not supported by ESP-TYLIBS."
-            )
+            raise ValueError(f"Platform '{platform_alias}' is not supported by TYLIBS.")
 
         if platform_alias == "any" and CURRENT_PLATFORM:
             platform_alias = CURRENT_PLATFORM
@@ -1582,11 +1580,11 @@ class TYLIBSEnvEncoder(JSONEncoder):
 
 class TYLIBSRecord:
     """
-    TYLIBSRecord represents one record of installed ESP-TYLIBS on system.
+    TYLIBSRecord represents one record of installed TYLIBS on system.
     Contains:
-        * version - actual version of ESP-TYLIBS (example '5.0')
-        * path - absolute path to the ESP-TYLIBS
-        * features - features using ESP-TYLIBS
+        * version - actual version of TYLIBS (example '5.0')
+        * path - absolute path to the TYLIBS
+        * features - features using TYLIBS
         * targets - ESP chips for which are installed needed toolchains (example ['esp32' , 'esp32s2'])
                   - Default value is [], since user didn't define any targets yet
     """
@@ -1678,10 +1676,10 @@ class TYLIBSRecord:
 
 class TYLIBSEnv:
     """
-    TYLIBSEnv represents ESP-TYLIBS Environments installed on system and is responsible for loading and saving structured data.
+    TYLIBSEnv represents TYLIBS Environments installed on system and is responsible for loading and saving structured data.
     All information is saved and loaded from TYLIBS_ENV_FILE.
     Contains:
-        * tylibs_installed - all installed environments of ESP-TYLIBS on system.
+        * tylibs_installed - all installed environments of TYLIBS on system.
     """
 
     def __init__(self) -> None:
@@ -1745,10 +1743,10 @@ class TYLIBSEnv:
                 try:
                     tylibs_installed = tylibs_env_json["tylibsInstalled"]
                 except KeyError:
-                    # If no ESP-TYLIBS record is found in loaded file, do not update and keep default value from constructor
+                    # If no TYLIBS record is found in loaded file, do not update and keep default value from constructor
                     pass
                 else:
-                    # Load and verify ESP-TYLIBS records found in TYLIBS_ENV_FILE
+                    # Load and verify TYLIBS records found in TYLIBS_ENV_FILE
                     tylibs_installed.pop("sha", None)
                     tylibs_installed_verified: Dict[str, TYLIBSRecord] = {}
                     for tylibs in tylibs_installed:
@@ -1762,7 +1760,7 @@ class TYLIBSEnv:
                             warn(
                                 f'{err} "{tylibs}" found in {tylibs_env_file_path}, removing this record.'
                             )
-                    # Combine ESP-TYLIBS loaded records with the one in constructor, to be sure that there is an active ESP-TYLIBS record in the tylibs_installed
+                    # Combine TYLIBS loaded records with the one in constructor, to be sure that there is an active TYLIBS record in the tylibs_installed
                     # If the active record is already in tylibs_installed, it is not overwritten
                     tylibs_env_obj.tylibs_installed = dict(
                         tylibs_env_obj.tylibs_installed, **tylibs_installed_verified
@@ -1777,7 +1775,7 @@ class TYLIBSEnv:
 
 class ENVState:
     """
-    ENVState is used to handle TYLIBS global variables that are set in environment and need to be removed when switching between ESP-TYLIBS versions in opened shell.
+    ENVState is used to handle TYLIBS global variables that are set in environment and need to be removed when switching between TYLIBS versions in opened shell.
     Every opened shell/terminal has it's own temporary file to store these variables.
     The temporary file's name is generated automatically with suffix 'tylibs_ + opened shell ID'. Path to this tmp file is stored as env global variable (env_key).
     The shell ID is crucial, since in one terminal can be opened more shells.
@@ -1822,7 +1820,7 @@ class ENVState:
         except (IOError, OSError):
             warn(
                 f"File storing TYLIBS env variables {self.deactivate_file_path} is not accessible to write. "
-                "Potentional switching ESP-TYLIBS versions may cause problems"
+                "Potentional switching TYLIBS versions may cause problems"
             )
         return self.deactivate_file_path
 
@@ -1890,7 +1888,7 @@ def get_python_exe_and_subdir() -> Tuple[str, str]:
 
 def get_tylibs_version() -> str:
     """
-    Return ESP-TYLIBS version.
+    Return TYLIBS version.
     """
     tylibs_version: Optional[str] = None
 
@@ -2215,7 +2213,7 @@ def get_unset_format_and_separator(args: List[str]) -> Tuple[str, str]:
 
 def active_repo_id() -> str:
     """
-    Function returns unique id of running ESP-TYLIBS combining current tylibspath with version.
+    Function returns unique id of running TYLIBS combining current tylibspath with version.
     The id is unique with same version & different path or same path & different version.
     """
     try:
@@ -2391,7 +2389,7 @@ def handle_missing_versions(
     if "NIX_PATH" in os.environ:
         fatal(
             f"{msg} The environment indicates that you might be using NixOS. "
-            "Please see https://nixos.wiki/wiki/ESP-TYLIBS for how to install tools for it."
+            "Please see https://nixos.wiki/wiki/TYLIBS for how to install tools for it."
         )
     else:
         fatal(f"{msg} Please run '{install_cmd}' to install it.")
@@ -2482,17 +2480,17 @@ def check_python_venv_compatibility(
         if read_tylibs_version != tylibs_version:
             fatal(
                 f"Python environment is set to {tylibs_python_env_path} which was generated for "
-                f"ESP-TYLIBS {read_tylibs_version} instead of the current {tylibs_version}. "
+                f"TYLIBS {read_tylibs_version} instead of the current {tylibs_version}. "
                 "The issue can be solved by (1) removing the directory and re-running the install script, "
                 "or (2) unsetting the TYLIBS_PYTHON_ENV_PATH environment variable, or (3) "
-                "re-runing the install script from a clean shell where an ESP-TYLIBS environment is "
+                "re-runing the install script from a clean shell where an TYLIBS environment is "
                 "not active."
             )
             raise SystemExit(1)
     except OSError as e:
         # perhaps the environment was generated before the support for VENV_VER_FILE was added
         warn(
-            f"The following issue occurred while accessing the ESP-TYLIBS version file in the Python environment: {e}. "
+            f"The following issue occurred while accessing the TYLIBS version file in the Python environment: {e}. "
             "(Diagnostic information. It can be ignored.)"
         )
 
@@ -2611,7 +2609,7 @@ def get_tylibs_download_url_apply_mirrors(
     args: Any = None, download_url: str = TYLIBS_DL_URL
 ) -> str:
     """
-    Returns URL for ESP-TYLIBS download with applied mirrors if available.
+    Returns URL for TYLIBS download with applied mirrors if available.
     If original URL pointed to Github and TYLIBS_GITHUB_ASSETS is set, change the source to Espressif's download servers.
     """
     url = apply_mirror_prefix_map(args, download_url)
@@ -3085,13 +3083,13 @@ def action_install_python_env(args):  # type: ignore
                 ):
                     warn(
                         f"TYLIBS_PYTHON_ENV_PATH is set to {environ_tylibs_python_env_path} but it does not match "
-                        f"the detected {tylibs_version} ESP-TYLIBS version and/or the used {PYTHON_VER_MAJOR_MINOR} "
+                        f"the detected {tylibs_version} TYLIBS version and/or the used {PYTHON_VER_MAJOR_MINOR} "
                         "version of Python. If you have not set TYLIBS_PYTHON_ENV_PATH intentionally then it is "
-                        "recommended to re-run this script from a clean shell where an ESP-TYLIBS environment is "
+                        "recommended to re-run this script from a clean shell where an TYLIBS environment is "
                         "not active."
                     )
 
-                # Verify if TYLIBS_PYTHON_ENV_PATH is a valid ESP-TYLIBS Python virtual environment directory
+                # Verify if TYLIBS_PYTHON_ENV_PATH is a valid TYLIBS Python virtual environment directory
                 # to decide if content should be removed
                 if os.path.exists(
                     os.path.join(environ_tylibs_python_env_path, VENV_VER_FILE)
@@ -3107,7 +3105,7 @@ def action_install_python_env(args):  # type: ignore
                 ):  # show the message only if the directory is not empty
                     info(
                         f"TYLIBS_PYTHON_ENV_PATH is set to {environ_tylibs_python_env_path}, "
-                        "but it does not appear to be an ESP-TYLIBS Python virtual environment directory. "
+                        "but it does not appear to be an TYLIBS Python virtual environment directory. "
                         "Existing data in this folder will be preserved to prevent unintentional data loss."
                     )
 
@@ -3136,7 +3134,7 @@ def action_install_python_env(args):  # type: ignore
                     f.write(tylibs_version)
             except OSError as e:
                 warn(
-                    f"The following issue occurred while generating the ESP-TYLIBS version file in the Python environment: {e}. "
+                    f"The following issue occurred while generating the TYLIBS version file in the Python environment: {e}. "
                     "(Diagnostic information. It can be ignored.)"
                 )
 
@@ -3404,7 +3402,7 @@ def action_rewrite(args):  # type: ignore
 
 def action_uninstall(args: Any) -> None:
     """
-    Print or remove installed tools versions, that are not used by active ESP-TYLIBS version anymore.
+    Print or remove installed tools versions, that are not used by active TYLIBS version anymore.
     Additionally remove all older versions of previously downloaded archives.
     """
     tools_info = load_tools_info()
@@ -3451,7 +3449,7 @@ def action_uninstall(args: Any) -> None:
             )
         return
 
-    # Remove installed tools that are not used by current ESP-TYLIBS version.
+    # Remove installed tools that are not used by current TYLIBS version.
     for tool in unused_tools_versions:
         for version in unused_tools_versions[tool]:
             try:
@@ -3464,7 +3462,7 @@ def action_uninstall(args: Any) -> None:
             except OSError as error:
                 warn(f"{error.filename} can not be removed because {error.strerror}.")
 
-    # Remove old archives versions and archives that are not used by the current ESP-TYLIBS version.
+    # Remove old archives versions and archives that are not used by the current TYLIBS version.
     if args.remove_archives:
         tools_spec, tools_info_for_platform = get_tools_spec_and_platform_info(
             CURRENT_PLATFORM, ["all"], ["all"], quiet=True
@@ -3671,7 +3669,7 @@ def main(argv: List[str]) -> None:
         action="store_true",
     )
     parser.add_argument("--tools-json", help="Path to the tools.json file to use")
-    parser.add_argument("--tylibs-path", help="ESP-TYLIBS path to use")
+    parser.add_argument("--tylibs-path", help="TYLIBS path to use")
 
     subparsers = parser.add_subparsers(dest="action")
     list_parser = subparsers.add_parser(
@@ -3707,7 +3705,7 @@ def main(argv: List[str]) -> None:
     )
     export.add_argument(
         "--deactivate",
-        help="Output command for deactivate different ESP-TYLIBS version, previously set with export",
+        help="Output command for deactivate different TYLIBS version, previously set with export",
         action="store_true",
     )
     export.add_argument("--unset", help=argparse.SUPPRESS, action="store_true")
@@ -3772,7 +3770,7 @@ def main(argv: List[str]) -> None:
 
     uninstall = subparsers.add_parser(
         "uninstall",
-        help="Remove installed tools, that are not used by current version of ESP-TYLIBS.",
+        help="Remove installed tools, that are not used by current version of TYLIBS.",
     )
     uninstall.add_argument("--dry-run", help="Print unused tools.", action="store_true")
     uninstall.add_argument(

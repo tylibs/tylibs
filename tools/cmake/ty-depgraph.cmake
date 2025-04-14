@@ -23,7 +23,7 @@ function(depgraph_add_edge dep_from dep_to)
   if(NOT depgraph_enabled)
     return()
   endif()
-  tylibs_build_get_property(common_reqs __COMPONENT_REQUIRES_COMMON)
+  tylibs_build_get_property(common_reqs __TY_COMPONENT_REQUIRES_COMMON)
 
   set(attr)
   if(__REQUIRES)
