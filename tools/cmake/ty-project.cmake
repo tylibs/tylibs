@@ -1,28 +1,28 @@
 # Designed to be included from an TYLIBS app's CMakeLists.txt file
 cmake_minimum_required(VERSION 3.16)
 
-# Get the currently selected sdkconfig file early, so this doesn't have to be
+# Get the currently selected tyconfig file early, so this doesn't have to be
 # done multiple times on different places.
-if(SDKCONFIG)
-  get_filename_component(sdkconfig "${SDKCONFIG}" ABSOLUTE)
+if(TYCONFIG)
+  get_filename_component(tyconfig "${TYCONFIG}" ABSOLUTE)
 else()
-  set(sdkconfig "${CMAKE_SOURCE_DIR}/sdkconfig")
+  set(tyconfig "${CMAKE_SOURCE_DIR}/tyconfig")
 endif()
 
 # Check if the cmake was started as part of the set-target action. If so, check
-# for existing sdkconfig file and rename it. This is done before __target_init,
-# so the existing TYLIBS_TARGET from sdkconfig is not considered for consistence
+# for existing tyconfig file and rename it. This is done before __target_init,
+# so the existing TYLIBS_TARGET from tyconfig is not considered for consistence
 # checking.
-if("$ENV{_TYLIBS_PY_SET_TARGET_ACTION}" EQUAL "1" AND EXISTS "${sdkconfig}")
-  file(RENAME "${sdkconfig}" "${sdkconfig}.old")
+if("$ENV{_TYLIBS_PY_SET_TARGET_ACTION}" EQUAL "1" AND EXISTS "${tyconfig}")
+  file(RENAME "${tyconfig}" "${tyconfig}.old")
   message(
-    STATUS "Existing sdkconfig '${sdkconfig}' renamed to '${sdkconfig}.old'.")
+    STATUS "Existing tyconfig '${tyconfig}' renamed to '${tyconfig}.old'.")
 endif()
 
 include(${CMAKE_CURRENT_LIST_DIR}/ty-targets.cmake)
 # Initialize build target for this build using the environment variable or value
 # passed externally.
-__target_init("${sdkconfig}")
+__target_init("${tyconfig}")
 
 # The mere inclusion of this CMake file sets up some internal build properties.
 # These properties can be modified in between this inclusion the the
@@ -390,16 +390,16 @@ function(__project_info test_components)
   tylibs_build_get_property(PROJECT_VER PROJECT_VER)
   tylibs_build_get_property(PROJECT_PATH PROJECT_DIR)
   tylibs_build_get_property(BUILD_DIR BUILD_DIR)
-  tylibs_build_get_property(SDKCONFIG SDKCONFIG)
-  tylibs_build_get_property(SDKCONFIG_DEFAULTS SDKCONFIG_DEFAULTS)
+  tylibs_build_get_property(TYCONFIG TYCONFIG)
+  tylibs_build_get_property(TYCONFIG_DEFAULTS TYCONFIG_DEFAULTS)
   tylibs_build_get_property(PROJECT_EXECUTABLE EXECUTABLE)
   set(PROJECT_BIN ${CMAKE_PROJECT_NAME}.bin)
   tylibs_build_get_property(TYLIBS_VER TYLIBS_VER)
   tylibs_build_get_property(common_component_reqs
                             __TY_COMPONENT_REQUIRES_COMMON)
 
-  tylibs_build_get_property(sdkconfig_cmake SDKCONFIG_CMAKE)
-  include(${sdkconfig_cmake})
+  tylibs_build_get_property(tyconfig_cmake TYCONFIG_CMAKE)
+  include(${tyconfig_cmake})
   tylibs_build_get_property(COMPONENT_KCONFIGS KCONFIGS)
   tylibs_build_get_property(COMPONENT_KCONFIGS_PROJBUILD KCONFIG_PROJBUILDS)
   # tylibs_build_get_property(debug_prefix_map_gdbinit DEBUG_PREFIX_MAP_GDBINIT)
@@ -764,41 +764,41 @@ macro(project project_name)
   # Prepare the following arguments for the tylibs_build_process() call using
   # external user values:
   #
-  # SDKCONFIG_DEFAULTS is from external SDKCONFIG_DEFAULTS SDKCONFIG is from
-  # external SDKCONFIG BUILD_DIR is set to project binary dir
+  # TYCONFIG_DEFAULTS is from external TYCONFIG_DEFAULTS TYCONFIG is from
+  # external TYCONFIG BUILD_DIR is set to project binary dir
   #
   # PROJECT_NAME is taken from the passed name from project() call PROJECT_DIR
   # is set to the current directory PROJECT_VER is from the version text or git
   # revision of the current repo
 
-  # SDKCONFIG_DEFAULTS environment variable may specify a file name relative to
+  # TYCONFIG_DEFAULTS environment variable may specify a file name relative to
   # the root of the project. When building the bootloader, ignore this variable,
-  # since: 1. The bootloader project uses an existing SDKCONFIG file from the
-  # top-level project 2. File specified by SDKCONFIG_DEFAULTS will not be found
+  # since: 1. The bootloader project uses an existing TYCONFIG file from the
+  # top-level project 2. File specified by TYCONFIG_DEFAULTS will not be found
   # relative to the root of the bootloader project
   if(NOT BOOTLOADER_BUILD)
-    set(_sdkconfig_defaults "$ENV{SDKCONFIG_DEFAULTS}")
+    set(_tyconfig_defaults "$ENV{TYCONFIG_DEFAULTS}")
   endif()
 
-  if(NOT _sdkconfig_defaults)
-    if(EXISTS "${CMAKE_SOURCE_DIR}/sdkconfig.defaults")
-      set(_sdkconfig_defaults "${CMAKE_SOURCE_DIR}/sdkconfig.defaults")
+  if(NOT _tyconfig_defaults)
+    if(EXISTS "${CMAKE_SOURCE_DIR}/tyconfig.defaults")
+      set(_tyconfig_defaults "${CMAKE_SOURCE_DIR}/tyconfig.defaults")
     else()
-      set(_sdkconfig_defaults "")
+      set(_tyconfig_defaults "")
     endif()
   endif()
 
-  if(SDKCONFIG_DEFAULTS)
-    set(_sdkconfig_defaults "${SDKCONFIG_DEFAULTS}")
+  if(TYCONFIG_DEFAULTS)
+    set(_tyconfig_defaults "${TYCONFIG_DEFAULTS}")
   endif()
 
-  foreach(sdkconfig_default ${_sdkconfig_defaults})
-    get_filename_component(sdkconfig_default "${sdkconfig_default}" ABSOLUTE)
-    if(NOT EXISTS "${sdkconfig_default}")
+  foreach(tyconfig_default ${_tyconfig_defaults})
+    get_filename_component(tyconfig_default "${tyconfig_default}" ABSOLUTE)
+    if(NOT EXISTS "${tyconfig_default}")
       message(
-        FATAL_ERROR "SDKCONFIG_DEFAULTS '${sdkconfig_default}' does not exist.")
+        FATAL_ERROR "TYCONFIG_DEFAULTS '${tyconfig_default}' does not exist.")
     endif()
-    list(APPEND sdkconfig_defaults ${sdkconfig_default})
+    list(APPEND tyconfig_defaults ${tyconfig_default})
   endforeach()
 
   if(BUILD_DIR)
@@ -870,10 +870,10 @@ macro(project project_name)
 
   tylibs_build_process(
     ${TYLIBS_TARGET}
-    SDKCONFIG_DEFAULTS
-    "${sdkconfig_defaults}"
-    SDKCONFIG
-    ${sdkconfig}
+    TYCONFIG_DEFAULTS
+    "${tyconfig_defaults}"
+    TYCONFIG
+    ${tyconfig}
     BUILD_DIR
     ${build_dir}
     PROJECT_NAME

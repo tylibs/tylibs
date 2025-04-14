@@ -1,5 +1,5 @@
 #
-# Get target from single sdkconfig file
+# Get target from single tyconfig file
 #
 function(__target_from_config config target_out file_out)
   set(${target_out}
@@ -32,7 +32,7 @@ function(__target_from_config config target_out file_out)
 endfunction()
 
 #
-# Get target from list of sdkconfig files
+# Get target from list of tyconfig files
 #
 function(__target_from_configs configs target_out file_out)
   set(target NOTFOUND)
@@ -56,23 +56,23 @@ function(__target_from_configs configs target_out file_out)
 endfunction()
 
 #
-# Search for target in config files in the following order. SDKCONFIG cmake var,
-# default sdkconfig, SDKCONFIG_DEFAULTS cmake var if non-empty or
-# SDKCONFIG_DEFAULTS env var if non-empty or sdkconfig.defaults.
+# Search for target in config files in the following order. TYCONFIG cmake var,
+# default tyconfig, TYCONFIG_DEFAULTS cmake var if non-empty or
+# TYCONFIG_DEFAULTS env var if non-empty or tyconfig.defaults.
 #
 function(__target_guess target_out file_out)
-  # Select sdkconfig_defaults to look for target
-  if(SDKCONFIG_DEFAULTS)
-    set(defaults "${SDKCONFIG_DEFAULTS}")
-  elseif(DEFINED ENV{SDKCONFIG_DEFAULTS})
-    set(defaults "$ENV{SDKCONFIG_DEFAULTS}")
+  # Select tyconfig_defaults to look for target
+  if(TYCONFIG_DEFAULTS)
+    set(defaults "${TYCONFIG_DEFAULTS}")
+  elseif(DEFINED ENV{TYCONFIG_DEFAULTS})
+    set(defaults "$ENV{TYCONFIG_DEFAULTS}")
   endif()
 
   if(NOT defaults)
-    set(defaults "${CMAKE_SOURCE_DIR}/sdkconfig.defaults")
+    set(defaults "${CMAKE_SOURCE_DIR}/tyconfig.defaults")
   endif()
 
-  set(configs "${SDKCONFIG}" "${CMAKE_SOURCE_DIR}/sdkconfig" "${defaults}")
+  set(configs "${TYCONFIG}" "${CMAKE_SOURCE_DIR}/tyconfig" "${defaults}")
   message(DEBUG "Searching for target in '${configs}'")
   __target_from_configs("${configs}" target file)
   set(${target_out}
@@ -95,13 +95,13 @@ macro(__target_init config_file)
     if(IDF_TARGET)
       set(env_idf_target ${IDF_TARGET})
     else()
-      # Try to guess IDF_TARGET from sdkconfig files while honoring SDKCONFIG
-      # and SDKCONFIG_DEFAULTS values
+      # Try to guess IDF_TARGET from tyconfig files while honoring TYCONFIG and
+      # TYCONFIG_DEFAULTS values
       __target_guess(env_idf_target where)
       if(env_idf_target)
         message(
           STATUS
-            "IDF_TARGET is not set, guessed '${env_idf_target}' from sdkconfig '${where}'"
+            "IDF_TARGET is not set, guessed '${env_idf_target}' from tyconfig '${where}'"
         )
       else()
         set(env_idf_target esp32)
@@ -118,20 +118,20 @@ macro(__target_init config_file)
         FATAL_ERROR
           " IDF_TARGET '$CACHE{IDF_TARGET}' in CMake"
           " cache does not match currently selected IDF_TARGET '${env_idf_target}'."
-          " To change the target, clear the build directory and sdkconfig file,"
+          " To change the target, clear the build directory and tyconfig file,"
           " and build the project again.")
     endif()
   endif()
 
-  # Check if selected target is consistent with sdkconfig
-  __target_from_config("${config_file}" sdkconfig_target where)
-  if(sdkconfig_target)
-    if(NOT ${sdkconfig_target} STREQUAL ${env_idf_target})
+  # Check if selected target is consistent with tyconfig
+  __target_from_config("${config_file}" tyconfig_target where)
+  if(tyconfig_target)
+    if(NOT ${tyconfig_target} STREQUAL ${env_idf_target})
       message(
         FATAL_ERROR
-          " Target '${sdkconfig_target}' in sdkconfig '${where}'"
+          " Target '${tyconfig_target}' in tyconfig '${where}'"
           " does not match currently selected IDF_TARGET '${IDF_TARGET}'."
-          " To change the target, clear the build directory and sdkconfig file,"
+          " To change the target, clear the build directory and tyconfig file,"
           " and build the project again.")
     endif()
   endif()
@@ -167,7 +167,7 @@ macro(__target_set_toolchain)
         FATAL_ERROR
           " IDF_TOOLCHAIN '$CACHE{IDF_TOOLCHAIN}' in CMake cache does not match"
           " currently selected IDF_TOOLCHAIN '${env_idf_toolchain}'. To change the toolchain, clear"
-          " the build directory and sdkconfig file, and build the project again."
+          " the build directory and tyconfig file, and build the project again."
       )
     endif()
   endif()
@@ -191,7 +191,7 @@ macro(__target_set_toolchain)
         FATAL_ERROR
           " CMAKE_TOOLCHAIN_FILE '${toolchain}'"
           " does not match currently selected IDF_TARGET '${IDF_TARGET}'."
-          " To change the target, clear the build directory and sdkconfig file,"
+          " To change the target, clear the build directory and tyconfig file,"
           " and build the project again.")
     endif()
   endif()
@@ -268,7 +268,7 @@ macro(__target_set_toolchain)
         FATAL_ERROR
           " TYLIBS_TOOLCHAIN '$CACHE{TYLIBS_TOOLCHAIN}' in CMake cache does not match"
           " currently selected TYLIBS_TOOLCHAIN '${env_tylibs_toolchain}'. To change the toolchain, clear"
-          " the build directory and sdkconfig file, and build the project again."
+          " the build directory and tyconfig file, and build the project again."
       )
     endif()
   endif()
@@ -292,7 +292,7 @@ macro(__target_set_toolchain)
         FATAL_ERROR
           " CMAKE_TOOLCHAIN_FILE '${toolchain}'"
           " does not match currently selected TYLIBS_TARGET '${TYLIBS_TARGET}'."
-          " To change the target, clear the build directory and sdkconfig file,"
+          " To change the target, clear the build directory and tyconfig file,"
           " and build the project again.")
     endif()
   endif()

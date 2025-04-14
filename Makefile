@@ -40,9 +40,9 @@ esp.build: ## (re)compile for the selected TARGET
 esp.flash: esp.build ## Flash the firmware to ESP32
 	${IDFPY} -C ${APP_DIR} -B ${BUILD_DIR} flash
 
-## Delete build directory and sdkconfig
+## Delete build directory and tyconfig
 esp.clean:
-	$(RMDIR) ${BUILD_DIR} && $(RM) ${APP_DIR}/sdkconfig
+	$(RMDIR) ${BUILD_DIR} && $(RM) ${APP_DIR}/tyconfig
 
 ## Build the firmware for host execution (Linux only)
 ## This will start the monitor
@@ -73,4 +73,4 @@ linux.build: ## (re)compile
 
 ## Delete build directory
 linux.clean:
-	$(RMDIR) $(BUILD_DIR) && $(RM) ${APP_DIR}/sdkconfig
+	$(RMDIR) $(BUILD_DIR) && $(RM) ${APP_DIR}/tyconfig

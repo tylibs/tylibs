@@ -512,10 +512,10 @@ endfunction()
 # Prepare for component processing expanding each component's project include
 #
 macro(__ty_build_process_project_includes)
-  # Include the sdkconfig cmake file, since the following operations require
+  # Include the tyconfig cmake file, since the following operations require
   # knowledge of config values.
-  tylibs_build_get_property(sdkconfig_cmake SDKCONFIG_CMAKE)
-  include(${sdkconfig_cmake})
+  tylibs_build_get_property(tyconfig_cmake TYCONFIG_CMAKE)
+  include(${tyconfig_cmake})
 
   # Make each build property available as a read-only variable
   tylibs_build_get_property(build_properties __TY_BUILD_PROPERTIES)
@@ -561,10 +561,10 @@ endmacro()
 # this command.
 #
 function(__ty_build_import_configs)
-  # Include the sdkconfig cmake file, since the following operations require
+  # Include the tyconfig cmake file, since the following operations require
   # knowledge of config values.
-  tylibs_build_get_property(sdkconfig_cmake SDKCONFIG_CMAKE)
-  include(${sdkconfig_cmake})
+  tylibs_build_get_property(tyconfig_cmake TYCONFIG_CMAKE)
+  include(${tyconfig_cmake})
 
   tylibs_build_set_property(__CONFIG_VARIABLES "${CONFIGS_LIST}")
   foreach(config ${CONFIGS_LIST})
@@ -583,10 +583,10 @@ endfunction()
 # the buildsystem is processed for; defaults to CMAKE_SOURCE_DIR @param[in,
 # optional] PROJECT_VER (single value) version string of the main project;
 # defaults to 1 @param[in, optional] PROJECT_NAME (single value) main project
-# name, defaults to CMAKE_PROJECT_NAME @param[in, optional] SDKCONFIG (single
-# value) sdkconfig output path, defaults to PROJECT_DIR/sdkconfig if PROJECT_DIR
-# is set and CMAKE_SOURCE_DIR/sdkconfig if not @param[in, optional]
-# SDKCONFIG_DEFAULTS (single value) config defaults file to use for the build;
+# name, defaults to CMAKE_PROJECT_NAME @param[in, optional] TYCONFIG (single
+# value) tyconfig output path, defaults to PROJECT_DIR/tyconfig if PROJECT_DIR
+# is set and CMAKE_SOURCE_DIR/tyconfig if not @param[in, optional]
+# TYCONFIG_DEFAULTS (single value) config defaults file to use for the build;
 # defaults to none (Kconfig defaults or previously generated config are used)
 # @param[in, optional] BUILD_DIR (single value) directory for build artifacts;
 # defaults to CMAKE_BINARY_DIR @param[in, optional] COMPONENTS (multivalue)
@@ -599,8 +599,8 @@ endfunction()
 # components known to the build system are processed.
 macro(tylibs_build_process target)
   set(options)
-  set(single_value PROJECT_DIR PROJECT_VER PROJECT_NAME BUILD_DIR SDKCONFIG)
-  set(multi_value COMPONENTS SDKCONFIG_DEFAULTS)
+  set(single_value PROJECT_DIR PROJECT_VER PROJECT_NAME BUILD_DIR TYCONFIG)
+  set(multi_value COMPONENTS TYCONFIG_DEFAULTS)
   cmake_parse_arguments(_ "${options}" "${single_value}" "${multi_value}"
                         ${ARGN})
 
@@ -637,9 +637,9 @@ macro(tylibs_build_process target)
   __ty_build_set_default(BUILD_DIR ${CMAKE_BINARY_DIR})
 
   tylibs_build_get_property(project_dir PROJECT_DIR)
-  __ty_build_set_default(SDKCONFIG "${project_dir}/sdkconfig")
+  __ty_build_set_default(TYCONFIG "${project_dir}/tyconfig")
 
-  __ty_build_set_default(SDKCONFIG_DEFAULTS "")
+  __ty_build_set_default(TYCONFIG_DEFAULTS "")
 
   set(ENV{PYTHONPATH} "${tylibs_path}/third_party/esp-idf-kconfig")
   # Check for required Python modules
@@ -774,9 +774,9 @@ macro(tylibs_build_process target)
   endforeach()
 
   # Generate config values in different formats
-  tylibs_build_get_property(sdkconfig SDKCONFIG)
-  tylibs_build_get_property(sdkconfig_defaults SDKCONFIG_DEFAULTS)
-  __kconfig_generate_config("${sdkconfig}" "${sdkconfig_defaults}")
+  tylibs_build_get_property(tyconfig TYCONFIG)
+  tylibs_build_get_property(tyconfig_defaults TYCONFIG_DEFAULTS)
+  __kconfig_generate_config("${tyconfig}" "${tyconfig_defaults}")
   __ty_build_import_configs()
 
   # All targets built under this scope is with the TYLIBS build system
