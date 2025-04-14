@@ -1,3 +1,6 @@
 [submodule "lib/tycommon"]
 	path = lib/tycommon
 	url = git@github.com:tylibs/tycommon.git
+[submodule "third_party/esp-idf-kconfig"]
+	path = third_party/esp-idf-kconfig
+	url = git@github.com:tylibs/esp-idf-kconfig.git
