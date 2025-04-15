@@ -40,4 +40,16 @@ CONFIG_TY_LOG_LEVEL_INFO=y
 # default:
 CONFIG_TY_LOG_LEVEL=4
 # end of Tiny configuration
+
+CONFIG_TYSETTINGS=y
+
+#
+# TySettings configuration
+#
+# default:
+CONFIG_TYSETTINGS_DUALBANK=y
+CONFIG_TYSETTINGS_NONE=y
+# default:
+CONFIG_TYSETTINGS_LOG=y
+# end of TySettings configuration
 # end of Component config

@@ -20,7 +20,7 @@ namespace ty {
 /**
  * Represents error codes used by Tiny core modules.
  */
-typedef tinyError Error;
+typedef tyError Error;
 
 /*
  * The `TY_ERROR_*` enumeration values are re-defined using `kError` style format.

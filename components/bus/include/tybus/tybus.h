@@ -60,9 +60,9 @@ typedef struct TyBusSubscriber
     TyBusStateActionFn              exitAction;
 } TyBusSubscriber;
 
-tinyError tyBusSubscribe(TyBusSubscriber *aSubscriber);
+tyError tyBusSubscribe(TyBusSubscriber *aSubscriber);
 
-tinyError tyBusPublish(const char *aEventName, void *aData, size_t aDataLen);
+tyError tyBusPublish(const char *aEventName, void *aData, size_t aDataLen);
 
 #ifdef __cplusplus
 } // extern "C"

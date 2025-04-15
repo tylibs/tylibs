@@ -40,7 +40,7 @@ void tyBusOnSchedulerEvent(TyBusSchedulerNotifyFn aNotifyFn)
     mNotifyFn = aNotifyFn;
 }
 
-tinyError tyBusSchedulerInit()
+tyError tyBusSchedulerInit()
 {
     k_tid_t id =
         k_thread_create(&m_task_sm_thread_data, sm_task_sm_stack_area, K_THREAD_STACK_SIZEOF(sm_task_sm_stack_area),

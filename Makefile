@@ -6,7 +6,7 @@ ESP_TARGET := esp32s3
 ## Select the zephyr target/board to build
 ZEPHYR_TARGET := native_sim/native/64
 ## Select the Application
-APP_NAME := "examples/getting_started/hello_world"
+APP_NAME := examples/getting_started/hello_world
 
 BUILD_DIR := build
 export TYLIBS_PATH := $(HOME)/_dev/clever/components/tylibs
@@ -16,7 +16,7 @@ include tools/make/makefile.mk
 
 # import settings for the used Platform
 ifneq (,$(findstring esp,$(MAKECMDGOALS)))
-APP_DIR := ${APP_NAME}/esp
+APP_DIR := ${APP_NAME}
 include tools/make/espidf-54.mk
 endif
 ifneq (,$(findstring zephyr,$(MAKECMDGOALS)))
@@ -24,7 +24,7 @@ APP_DIR := ${APP_NAME}/zephyr
 include tools/make/zephyr-410.mk
 endif
 ifneq (,$(findstring linux,$(MAKECMDGOALS)))
-APP_DIR := ${APP_NAME}/linux
+APP_DIR := ${APP_NAME}
 endif
 
 # ESP-IDF specific targets
@@ -35,7 +35,7 @@ esp: esp.clean esp.build ## clean and build for the selected TARGET
 
 esp.build: ## (re)compile for the selected TARGET
 	@echo "Building for ${var1}"
-	${IDFPY} -C ${APP_DIR} -B ${BUILD_DIR} -DIDF_TARGET=${ESP_TARGET} -DTY_PYTHON_DEPS_CHECKED=1 build size -l
+	${IDFPY} -C ${APP_DIR} -B ${BUILD_DIR} -DTYLIBS_TARGET=esp -DIDF_TARGET=${ESP_TARGET} -DTY_PYTHON_DEPS_CHECKED=1 build size -l
 
 esp.flash: esp.build ## Flash the firmware to ESP32
 	${IDFPY} -C ${APP_DIR} -B ${BUILD_DIR} flash
@@ -64,7 +64,7 @@ zephyr.clean:
 linux: linux.clean linux.build ## clean and build
 
 linux.build: ## (re)compile
-	cmake -S ${APP_DIR} -B ${BUILD_DIR} -DTY_PYTHON_DEPS_CHECKED=1 && cmake --build ${BUILD_DIR} -- -j
+	cmake -S ${APP_DIR} -B ${BUILD_DIR} -DTYLIBS_TARGET=linux -DTY_PYTHON_DEPS_CHECKED=1 && cmake --build ${BUILD_DIR} -- -j
 
 ## Delete build directory
 linux.clean:

@@ -8,11 +8,13 @@ tylibs_build_process(
   COMPONENTS
   common
   bus
+  settings
   TYCONFIG
-  ${CMAKE_CURRENT_LIST_DIR}/../tyconfig
+  ${CMAKE_CURRENT_LIST_DIR}/../../tyconfig
   TYCONFIG_DEFAULTS
-  ${CMAKE_CURRENT_LIST_DIR}/../tyconfig.defaults
+  ${CMAKE_CURRENT_LIST_DIR}/../../tyconfig.defaults
   BUILD_DIR
   ${CMAKE_BINARY_DIR})
 
-target_link_libraries(${COMPONENT_LIB} PRIVATE tylibs::common tylibs::bus)
+target_link_libraries(${COMPONENT_LIB} PRIVATE tylibs::common tylibs::bus
+                                               tylibs::settings tyapp)

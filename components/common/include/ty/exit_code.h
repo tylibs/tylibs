@@ -80,17 +80,17 @@ const char *tinyExitCodeToString(uint8_t aExitCode);
  * @param[in]   aCondition  The condition to verify
  * @param[in]   aExitCode   The exit code.
  */
-#define VerifyOrDie(aCondition, aExitCode)                                                     \
-    do                                                                                         \
-    {                                                                                          \
-        if (!(aCondition))                                                                     \
-        {                                                                                      \
-            const char *start = strrchr(__FILE__, '/');                                        \
-            TY_UNUSED_VARIABLE(start);                                                         \
-            tyLogCrit("%s() at %s:%d: %s", __func__, (start ? start + 1 : __FILE__), __LINE__, \
-                      tinyExitCodeToString(aExitCode));                                        \
-            exit(aExitCode);                                                                   \
-        }                                                                                      \
+#define VerifyOrDie(aCondition, aExitCode)                                                            \
+    do                                                                                                \
+    {                                                                                                 \
+        if (!(aCondition))                                                                            \
+        {                                                                                             \
+            const char *start = strrchr(__FILE__, '/');                                               \
+            TY_UNUSED_VARIABLE(start);                                                                \
+            tyLogCrit("mod", "%s() at %s:%d: %s", __func__, (start ? start + 1 : __FILE__), __LINE__, \
+                      tinyExitCodeToString(aExitCode));                                               \
+            exit(aExitCode);                                                                          \
+        }                                                                                             \
     } while (false)
 
 /**

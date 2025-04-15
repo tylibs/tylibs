@@ -24,7 +24,7 @@ tyLogLevel tyLoggingGetLevel(void)
 }
 
 #if TY_CONFIG_LOG_LEVEL_DYNAMIC_ENABLE
-tinyError tyLoggingSetLevel(tyLogLevel aLogLevel)
+tyError tyLoggingSetLevel(tyLogLevel aLogLevel)
 {
     Error error = kErrorNone;
 
@@ -102,7 +102,7 @@ void tyLogDebg(const char *aModuleName, const char *aFormat, ...)
 #endif
 }
 
-tinyError tyLogGenerateNextHexDumpLine(tyLogHexDumpInfo *aInfo)
+tyError tyLogGenerateNextHexDumpLine(tyLogHexDumpInfo *aInfo)
 {
     AssertPointerIsNotNull(aInfo);
 

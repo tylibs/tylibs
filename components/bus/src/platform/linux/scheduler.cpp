@@ -43,7 +43,7 @@ void tyBusOnSchedulerEvent(TyBusSchedulerNotifyFn aNotifyFn)
     mNotifyFn = aNotifyFn;
 }
 
-tinyError tyBusSchedulerInit()
+tyError tyBusSchedulerInit()
 {
     pthread_create(&mThread, NULL, schedulerTask, NULL);
     return TY_ERROR_NONE;

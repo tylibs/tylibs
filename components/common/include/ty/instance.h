@@ -222,7 +222,7 @@ typedef void (*otStateChangedCallback)(otChangedFlags aFlags, void *aContext);
  * @retval OT_ERROR_ALREADY  The callback was already registered.
  * @retval OT_ERROR_NO_BUFS  Could not add the callback due to resource constraints.
  */
-tinyError otSetStateChangedCallback(tyInstance *aInstance, otStateChangedCallback aCallback, void *aContext);
+tyError otSetStateChangedCallback(tyInstance *aInstance, otStateChangedCallback aCallback, void *aContext);
 
 /**
  * Removes a callback to indicate when certain configuration or state changes within OpenThread.
@@ -254,7 +254,7 @@ void tyInstanceReset(tyInstance *aInstance);
  * @retval OT_ERROR_BUSY         Failed due to another operation is ongoing.
  * @retval OT_ERROR_NOT_CAPABLE  Not capable of resetting to bootloader.
  */
-tinyError tyInstanceResetToBootloader(tyInstance *aInstance);
+tyError tyInstanceResetToBootloader(tyInstance *aInstance);
 
 /**
  * Deletes all the settings stored on non-volatile memory, and then triggers a platform reset.
@@ -283,7 +283,7 @@ void tyInstanceResetRadioStack(tyInstance *aInstance);
  * @retval OT_ERROR_NONE           All persistent info/state was erased successfully.
  * @retval OT_ERROR_INVALID_STATE  Device is not in `disabled` state/role.
  */
-tinyError tyInstanceErasePersistentInfo(tyInstance *aInstance);
+tyError tyInstanceErasePersistentInfo(tyInstance *aInstance);
 
 /**
  * Gets the OpenThread version string.

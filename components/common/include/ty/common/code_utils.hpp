@@ -129,7 +129,7 @@
  *
  * @param[in]  aError  The error to be ignored.
  */
-static inline void IgnoreError(tinyError aError)
+static inline void IgnoreError(tyError aError)
 {
     TY_UNUSED_VARIABLE(aError);
 }

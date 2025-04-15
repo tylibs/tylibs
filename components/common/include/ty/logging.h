@@ -100,7 +100,7 @@ tyLogLevel tyLoggingGetLevel(void);
  * @retval TY_ERROR_NONE            Successfully updated log level.
  * @retval TY_ERROR_INVALID_ARGS    Log level value is invalid.
  */
-tinyError tyLoggingSetLevel(tyLogLevel aLogLevel);
+tyError tyLoggingSetLevel(tyLogLevel aLogLevel);
 
 /**
  * Emits a log message at critical log level.
@@ -197,7 +197,7 @@ typedef struct
  * @retval TY_ERROR_NONE       Successfully generated the next line, `mLine` field in @p aInfo is updated.
  * @retval TY_ERROR_NTY_FOUND  Reached the end and no more line to generate.
  */
-tinyError tyLogGenerateNextHexDumpLine(tyLogHexDumpInfo *aInfo);
+tyError tyLogGenerateNextHexDumpLine(tyLogHexDumpInfo *aInfo);
 
 /**
  * @}

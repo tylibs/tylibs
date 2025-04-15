@@ -46,7 +46,7 @@ void tyBusOnSchedulerEvent(TyBusSchedulerNotifyFn aNotifyFn)
     mNotifyFn = aNotifyFn;
 }
 
-tinyError tyBusSchedulerInit()
+tyError tyBusSchedulerInit()
 {
     mBacklogQueue = xQueueCreate(CONFIG_TYBUS_MAX_BACKLOG, sizeof(TyBusEvent));
     xTaskCreate(schedulerTask, "tScheduler", 1024, NULL, 0, NULL);

@@ -39,6 +39,6 @@ void tyBusSchedulerEventPush(const TyBusEvent &aEvent);
 
 void tyBusOnSchedulerEvent(TyBusSchedulerNotifyFn aNotifyFn);
 
-tinyError tyBusSchedulerInit(void);
+tyError tyBusSchedulerInit(void);
 
 #endif // TYBUS_PLATFORM_SCHEDULER_H_

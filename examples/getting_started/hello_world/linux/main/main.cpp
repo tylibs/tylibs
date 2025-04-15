@@ -6,85 +6,18 @@
  * @brief
  *   TYLiBS simplest example: Hello World
  */
+#include "app.h"
+#include "pthread.h"
 
-#include <ty/instance.h>
-#include <ty/logging.h>
-#include <ty/platform/thread.h>
-#include "tybus/tybus.h"
-
-#include "etl/string.h"
-
-const char *TAG = "main";
-
-/*****************************************************************************
- * Ty Bus Definitions for the main Module
- *****************************************************************************/
-
-// 1. Define the events using in the state table
-TYBUS_EVENT_NAME(MAIN, HELLO_WORLD, "HelloWorld");
-TYBUS_STATE_NAME(MAIN, START, "Start");
-
-// 2. Declare the actions using in the state table
-static void onHelloWorld(const TyBusEvent *aEvent);
-
-// 3. Glue everything together
-static const TyBusStateTableRow stateTable[] = {{
-    .state = MAIN_STATE_START,                // only process the event, if the current state
-                                              // match. TYBUS_STATE_INITIAL is the default state.
-                                              // use TYBUS_STATE_ANY, if this should be ignored
-    .event          = MAIN_EVENT_HELLO_WORLD, // process if the event matches
-    .conditionCheck = NULL,                   // No condition function.  The action is always executed.
-    .entryAction    = onHelloWorld,           // The function to call when the event occurs.
-    .nextState      = NULL,                   // Keep the current state after the action.
-    .exitAction     = NULL,                   // No exit function.
-    .stop           = true                    // Stop processing after this entry (this is the default case)
-}};
-
-static TyBusSubscriber mSubscriber =
-    TYBUS_SUBSCRIBER("app", stateTable, TYBUS_TABLE_ROW_COUNT(stateTable), MAIN_STATE_START);
-/*****************************************************************************/
-// Implement the Actions
-static void onHelloWorld(const TyBusEvent *aEvent)
-{
-    tyLogCrit(TAG, "Action onHelloWorld() called from TyBus");
+namespace {
+static pthread_t mAppThread;
 }
 
-int main(void)
+extern "C" int main()
 {
-    // Subscribe to the TyBus using the state table. This registers the module
-    // to receive and process events according to the defined rules.
-    tyLogInfo(TAG, "Subscribe module '%s' to TyBus", TAG);
-    tyBusSubscribe(&mSubscriber);
-
-    while (true)
-    {
-        tyLogInfo(TAG, "Publish HELLO_WORLD event");
-        // Publish the HELLO_WORLD event.  The TyBus will then look up this
-        // event in the state table and execute the corresponding action
-        // (onHelloWorld in this case).  The NULL and 0 arguments indicate no data
-        // is being sent with the event.    // publish an event to the TyBus
-        tyBusPublish(MAIN_EVENT_HELLO_WORLD, NULL, 0);
-
-        // next event in 1 second
-        tyPlatDelay(5000);
-    }
+    // initialize the application as a pthread
+    pthread_create(&mAppThread, NULL, appInit, NULL);
+    // wait for the application to finish
+    pthread_join(mAppThread, NULL);
     return 0;
 }
-
-// extern "C" int main(void)
-// {
-//     tyInstance     *instance;
-//     etl::string<32> hello_world = "Hello World!";
-
-//     instance = tyInstanceInitSingle();
-//     // Initialize the settings subsystem
-//     while (true)
-//     {
-//         tyLogInfo("modul", "%s", hello_world.c_str());
-//         tyLogCrit("modul", "Critical");
-//         // next event in 1 second
-//         tyPlatDelay(1000);
-//     }
-//     tyInstanceFinalize(instance);
-//     return 0;
-// }

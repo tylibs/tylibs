@@ -107,7 +107,7 @@ static void init()
     mInitialized = true;
 }
 
-tinyError tyBusPublish(const char *aEventName, void *aData, size_t aDataLen)
+tyError tyBusPublish(const char *aEventName, void *aData, size_t aDataLen)
 {
     // we need to copy the data within the event to the heap
     // it will be freed, after the event is processed
@@ -122,7 +122,7 @@ tinyError tyBusPublish(const char *aEventName, void *aData, size_t aDataLen)
     return TY_ERROR_NONE;
 }
 
-tinyError tyBusSubscribe(TyBusSubscriber *aSubscriber)
+tyError tyBusSubscribe(TyBusSubscriber *aSubscriber)
 {
     // let the first subscription initialize the bus
     if (!mInitialized)
