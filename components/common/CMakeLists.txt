@@ -1,7 +1,8 @@
 tylibs_build_get_property(target TYLIBS_TARGET)
+tylibs_build_get_property(tylibs_path TYLIBS_PATH)
 
 set(srcs)
-set(includes "include")
+set(includes "include" ${tylibs_path}/third_party/etl/include)
 set(priv_includes "src/include")
 list(
   APPEND

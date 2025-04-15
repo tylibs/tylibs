@@ -4,3 +4,6 @@
 [submodule "third_party/esp-idf-kconfig"]
 	path = third_party/esp-idf-kconfig
 	url = git@github.com:tylibs/esp-idf-kconfig.git
+[submodule "third_party/etl"]
+	path = third_party/etl
+	url = https://github.com/ETLCPP/etl.git
