@@ -1,6 +1,6 @@
 #
 # Automatically generated file. DO NOT EDIT.
-# TYLiBS  Project Configuration
+# TYLiBS 5.4.0 Project Configuration
 #
 # default:
 CONFIG_TYLIBS_CMAKE=y
@@ -40,6 +40,17 @@ CONFIG_TY_LOG_LEVEL_INFO=y
 # default:
 CONFIG_TY_LOG_LEVEL=4
 # end of Tiny configuration
+
+CONFIG_TYNET=y
+
+#
+# TyNet configuration
+#
+# default:
+CONFIG_TYNET_MQTT_ENABLED=y
+# default:
+CONFIG_TYNET_LOG=y
+# end of TyNet configuration
 
 CONFIG_TYSETTINGS=y
 
