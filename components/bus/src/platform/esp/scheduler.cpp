@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright 2025 Clever Design (Switzerland) GmbH
 // SPDX-License-Identifier: Apache-2.0
 
+#include "tyconfig.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/queue.h>
 #include <freertos/task.h>

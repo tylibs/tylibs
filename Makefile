@@ -42,12 +42,7 @@ esp.flash: esp.build ## Flash the firmware to ESP32
 
 ## Delete build directory and tyconfig
 esp.clean:
-	$(RMDIR) ${BUILD_DIR} && $(RM) ${APP_DIR}/tyconfig
-
-## Build the firmware for host execution (Linux only)
-## This will start the monitor
-esp.linux:
-	${IDFPY} -C ${APP_DIR} -B ${BUILD_DIR}  -DTY_PYTHON_DEPS_CHECKED=1 --preview set-target linux build monitor
+	$(RMDIR) ${BUILD_DIR} && $(RM) ${APP_DIR}/tyconfig && $(RM) ${APP_DIR}/sdkconfig
 
 # Zephyr specific targets
 # ---------------------------------------------------------------------------

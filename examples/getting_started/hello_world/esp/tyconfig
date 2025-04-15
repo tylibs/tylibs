@@ -8,22 +8,36 @@ CONFIG_TYLIBS_CMAKE=y
 #
 # Component config
 #
+CONFIG_TYBUS=y
+
+#
+# TyBus configuration
+#
 # default:
-# CONFIG_TYBUS is not set
+CONFIG_TYBUS_MAX_SUBSCRIBERS=64
+# default:
+CONFIG_TYBUS_MAX_BACKLOG=16
+# CONFIG_TYBUS_MALLOC_STRATEGY_DISABLE is not set
+CONFIG_TYBUS_MALLOC_STRATEGY_DEFAULT=y
+# CONFIG_TYBUS_MALLOC_STRATEGY_INTERNAL is not set
+# default:
+CONFIG_TYBUS_LOG=y
+# default:
+CONFIG_TYBUS_ASSERTS=y
+# end of TyBus configuration
 
 #
 # Tiny configuration
 #
-# default:
 CONFIG_TY_LOG=y
 # default:
 CONFIG_TY_ASSERTS=y
-CONFIG_TY_LOG_LEVEL_CRIT=y
+# CONFIG_TY_LOG_LEVEL_CRIT is not set
 # CONFIG_TY_LOG_LEVEL_WARN is not set
 # CONFIG_TY_LOG_LEVEL_NOTE is not set
-# CONFIG_TY_LOG_LEVEL_INFO is not set
+CONFIG_TY_LOG_LEVEL_INFO=y
 # CONFIG_TY_LOG_LEVEL_DEBG is not set
 # default:
-CONFIG_TY_LOG_LEVEL=1
+CONFIG_TY_LOG_LEVEL=4
 # end of Tiny configuration
 # end of Component config
