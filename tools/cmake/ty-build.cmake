@@ -533,8 +533,6 @@ macro(__ty_build_process_project_includes)
     __ty_component_get_property(_name ${component_target} COMPONENT_NAME)
     set(COMPONENT_NAME ${_name})
     set(COMPONENT_DIR ${dir})
-    set(COMPONENT_PATH ${dir}) # this is deprecated, users are encouraged to use
-                               # COMPONENT_DIR; retained for compatibility
     if(EXISTS ${COMPONENT_DIR}/project_include.cmake)
       include(${COMPONENT_DIR}/project_include.cmake)
     endif()

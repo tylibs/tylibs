@@ -1,4 +1,7 @@
 // SPDX-FileCopyrightText: Copyright 2025 Clever Design (Switzerland) GmbH
+// SPDX-License-Identifier: Apache-2.0
+
+// SPDX-FileCopyrightText: Copyright 2025 Clever Design (Switzerland) GmbH
 // SPDX-License-Identifier: GPL-3.0-only OR OR LicenseRef-BYG-Software-1.0
 
 /**

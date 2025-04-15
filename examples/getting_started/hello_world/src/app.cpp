@@ -1,4 +1,7 @@
 // SPDX-FileCopyrightText: Copyright 2025 Clever Design (Switzerland) GmbH
+// SPDX-License-Identifier: Apache-2.0
+
+// SPDX-FileCopyrightText: Copyright 2025 Clever Design (Switzerland) GmbH
 // SPDX-License-Identifier: GPL-3.0-only OR OR LicenseRef-BYG-Software-1.0
 /**
  * @file
@@ -12,8 +15,11 @@
 #include <ty/platform/toolchain.h>
 #include "ty/error.h"
 #include "ty/platform/thread.h"
+#include "tynet/mqtt/mqtt.hpp"
 
-static const char *kLogModule = "App";
+static const char    *kLogModule    = "App";
+const etl::string<32> kMqttUrl      = "mqtt://localhost:1883";
+const etl::string<32> kMqttClientId = "mqtt_client";
 
 TYBUS_EVENT_NAME(MAIN, HELLO_WORLD, "HelloWorld");
 TYBUS_STATE_NAME(MAIN, START, "Start");
@@ -80,6 +86,13 @@ void *appInit(void *)
     instance = tyInstanceInitSingle();
     // Initialize the settings subsystem
     initSettings(instance);
+
+    auto mqtt = ty::Mqtt::create(*instance);
+    if (mqtt.has_value())
+    {
+        ty::Mqtt::MqttConfiguration mqttConfig = {kMqttUrl, kMqttClientId};
+        mqtt->get()->Init(mqttConfig);
+    }
 
     // initialize the Tybus subscriber
     tyBusSubscribe(&mSubscriber);

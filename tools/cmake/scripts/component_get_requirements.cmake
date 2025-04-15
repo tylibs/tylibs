@@ -129,7 +129,6 @@ function(__ty_component_get_requirements)
                               COMPONENT_NAME)
   set(COMPONENT_NAME ${__ty_component_name})
   set(COMPONENT_DIR ${__ty_component_dir})
-  set(COMPONENT_PATH ${__ty_component_dir}) # for backward compatibility only,
   # COMPONENT_DIR is preferred
   include(${__ty_component_dir}/CMakeLists.txt OPTIONAL)
 

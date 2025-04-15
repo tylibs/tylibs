@@ -46,7 +46,6 @@ CONFIG_TYNET=y
 #
 # TyNet configuration
 #
-# default:
 CONFIG_TYNET_MQTT_ENABLED=y
 # default:
 CONFIG_TYNET_LOG=y

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright 2025 Clever Design (Switzerland) GmbH
+// SPDX-License-Identifier: Apache-2.0
+
 #ifndef TY_PRINT_HPP
 #define TY_PRINT_HPP
 

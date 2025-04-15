@@ -8,7 +8,7 @@ if TYNET
 menu "TyNet configuration"
 config TYNET_MQTT_ENABLED
 	bool "Enable MQTT support"
-	default "y"
+	default "n"
 	help
 		Selects whether Mqtt support is enabled.
 

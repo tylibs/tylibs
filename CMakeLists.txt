@@ -14,11 +14,10 @@ tylibs_build_set_property(C_COMPILE_OPTIONS "${c_compile_options}" APPEND)
 tylibs_build_set_property(CXX_COMPILE_OPTIONS "${cxx_compile_options}" APPEND)
 tylibs_build_set_property(ASM_COMPILE_OPTIONS "${asm_compile_options}" APPEND)
 tylibs_build_set_property(COMPILE_DEFINITIONS "${compile_definitions}" APPEND)
-# tylibs_build_set_property(LINK_OPTIONS "${link_options}" APPEND)
+tylibs_build_set_property(LINK_OPTIONS "${link_options}" APPEND)
 
 tylibs_build_get_property(build_component_targets __TY_BUILD_COMPONENT_TARGETS)
 
-message(STATUS "Building ${build_component_targets} with TYLIBS")
 # Add each component as a subdirectory, processing each component's
 # CMakeLists.txt
 foreach(component_target ${build_component_targets})
@@ -29,8 +28,6 @@ foreach(component_target ${build_component_targets})
   set(COMPONENT_NAME ${_name})
   set(COMPONENT_DIR ${dir})
   set(COMPONENT_ALIAS ${alias})
-  set(COMPONENT_PATH ${dir}) # for backward compatibility only, COMPONENT_DIR is
-                             # preferred
   tylibs_build_get_property(build_prefix __PREFIX)
   set(__tylibs_component_context 1)
   if(NOT prefix STREQUAL build_prefix)
