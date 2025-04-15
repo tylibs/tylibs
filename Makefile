@@ -13,18 +13,14 @@ export TYLIBS_PATH := $(HOME)/_dev/clever/components/tylibs
 export TYLIBS_COMPONENT_MANAGER := 0
 # include common makefile
 include tools/make/makefile.mk
+APP_DIR := ${APP_NAME}
 
 # import settings for the used Platform
 ifneq (,$(findstring esp,$(MAKECMDGOALS)))
-APP_DIR := ${APP_NAME}
 include tools/make/espidf-54.mk
 endif
 ifneq (,$(findstring zephyr,$(MAKECMDGOALS)))
-APP_DIR := ${APP_NAME}/zephyr
 include tools/make/zephyr-410.mk
-endif
-ifneq (,$(findstring linux,$(MAKECMDGOALS)))
-APP_DIR := ${APP_NAME}
 endif
 
 # ESP-IDF specific targets
