@@ -8,6 +8,8 @@ CONFIG_TYLIBS_CMAKE=y
 #
 # Component config
 #
+# default:
+# CONFIG_TYBUS is not set
 
 #
 # Tiny configuration

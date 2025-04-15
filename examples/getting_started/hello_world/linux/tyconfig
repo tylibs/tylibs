@@ -8,6 +8,23 @@ CONFIG_TYLIBS_CMAKE=y
 #
 # Component config
 #
+CONFIG_TYBUS=y
+
+#
+# TyBus configuration
+#
+# default:
+CONFIG_TYBUS_MAX_SUBSCRIBERS=64
+# default:
+CONFIG_TYBUS_MAX_BACKLOG=16
+# CONFIG_TYBUS_MALLOC_STRATEGY_DISABLE is not set
+CONFIG_TYBUS_MALLOC_STRATEGY_DEFAULT=y
+# CONFIG_TYBUS_MALLOC_STRATEGY_INTERNAL is not set
+# default:
+CONFIG_TYBUS_LOG=y
+# default:
+CONFIG_TYBUS_ASSERTS=y
+# end of TyBus configuration
 
 #
 # Tiny configuration
