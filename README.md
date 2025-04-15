@@ -1,6 +1,6 @@
 # TYLiBS
 
-**TYLiBS** (short for **Ty's Libraries**) is a **multi-platform build system, architecture, and library collection** for embedded and desktop development in modern **C++**.
+**TYLiBS** (short for **Tiny Libraries**) is a **multi-platform build system, architecture, and library collection** for embedded and desktop development in modern **C++**.
 
 Currently supporting:
 - 🐧 **Linux**
@@ -25,8 +25,8 @@ TYLiBS aims to provide a **unified codebase** and **modular architecture** that 
 
 - ✅ Multi-target CMake build system (Zephyr, ESP-IDF, Linux)
 - ✅ Modular library structure with reusable components
+- ✅ Embedded Template Library (ETL) integration
 - ⏳ Cross-platform abstraction layer (GPIO, Serial, etc.)
-- ⏳ Embedded Template Library (ETL) integration
 - ⏳ Unit test support (on-host)
 - ⏳ Examples and application templates
 
