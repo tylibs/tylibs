@@ -5,17 +5,5 @@
 
 namespace ty {
 namespace ble {
-class BleCom::impl
-{
-};
-BleCom::BleCom(const Configuration &aConfiguration)
-    : mConfiguration(aConfiguration)
-    , pimpl(new impl)
-{
-}
-BleCom::~BleCom()
-{
-    delete pimpl;
-}
 } // namespace ble
 } // namespace ty

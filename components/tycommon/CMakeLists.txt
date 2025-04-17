@@ -7,7 +7,6 @@ set(priv_includes "src/include")
 list(
   APPEND
   srcs
-  "src/pimpl.cpp"
   "src/instance/instance.cpp"
   "src/common/string.cpp"
   "src/common/error.cpp"

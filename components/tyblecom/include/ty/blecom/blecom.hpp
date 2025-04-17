@@ -5,8 +5,6 @@
 
 #include "tyconfig.h"
 #include <etl/string.h>
-#include "ty/pimpl.hpp"
-#include "ty/printable.hpp"
 
 #include "etl/memory.h"
 
@@ -21,11 +19,14 @@ public:
     {
         const etl::string<31> &name;
     };
-    BleCom() = delete;
-    ~BleCom();
+    BleCom()  = delete;
+    ~BleCom() = default;
 
 protected:
-    explicit BleCom(const Configuration &aConfiguration);
+    explicit BleCom(const Configuration &aConfiguration)
+        : mConfiguration(aConfiguration)
+    {
+    }
 
 public:
     [[nodiscard]] static auto create(Configuration &) -> etl::unique_ptr<BleCom>;
@@ -33,9 +34,6 @@ public:
 
 private:
     const Configuration &mConfiguration;
-    class impl;
-    impl *pimpl;
-    // pimpl<impl> impl;
 };
 } // namespace ble
 } // namespace ty
