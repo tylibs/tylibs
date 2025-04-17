@@ -22,12 +22,10 @@ public:
         const etl::string<31> &name;
     };
     BleCom() = delete;
+    ~BleCom();
 
 protected:
-    explicit BleCom(const Configuration &aConfiguration)
-        : mConfiguration(aConfiguration)
-    {
-    }
+    explicit BleCom(const Configuration &aConfiguration);
 
 public:
     [[nodiscard]] static auto create(Configuration &) -> etl::unique_ptr<BleCom>;
@@ -36,7 +34,8 @@ public:
 private:
     const Configuration &mConfiguration;
     class impl;
-    pimpl<impl> impl;
+    impl *pimpl;
+    // pimpl<impl> impl;
 };
 } // namespace ble
 } // namespace ty
