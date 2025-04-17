@@ -9,13 +9,14 @@
  *   BYG implementation
  */
 #include "app.h"
-#include <ty/logging.h>
-#include <ty/bus/tybus.h>
-#include <ty/platform/toolchain.h>
-#include <ty/settings/platform/settings.h>
+#include "ty/blecom/blecom.hpp"
+#include "ty/bus/tybus.h"
 #include "ty/error.h"
+#include "ty/logging.h"
 #include "ty/net/mqtt/mqtt.hpp"
 #include "ty/platform/thread.h"
+#include "ty/platform/toolchain.h"
+#include "ty/settings/platform/settings.h"
 
 static const char    *kLogModule    = "App";
 const etl::string<32> kMqttUrl      = "mqtt://localhost:1883";
@@ -77,6 +78,12 @@ tyError initSettings(tyInstance *aInstance)
     }
     return TY_ERROR_NONE;
 }
+void initBleCom()
+{
+    ty::ble::BleCom::Configuration bleConfig = {.name = "BYG"};
+
+    auto ble = ty::ble::BleCom::create(bleConfig);
+}
 } // namespace
 
 void *appInit(void *)
@@ -86,6 +93,7 @@ void *appInit(void *)
     instance = tyInstanceInitSingle();
     // Initialize the settings subsystem
     initSettings(instance);
+    initBleCom();
 
     ty::Mqtt::MqttConfiguration mqttConfig = {kMqttUrl, kMqttClientId};
 

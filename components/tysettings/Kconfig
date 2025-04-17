@@ -1,0 +1,64 @@
+config TY_SETTINGS
+	bool "TySettings Library"
+	select SETTINGS if ZEPHYR_PLATFORM
+	help
+		This option enables the TySettings Library
+
+if TY_SETTINGS
+menu "TySettings configuration"
+config TY_SETTINGS_DUALBANK
+	bool "Enable Dualbank"
+	default "y"
+	help
+		Selects whether to enable dualbank.
+		Gives the ability to have two banks of settings.
+		This is useful for having a backup bank of settings.
+
+choice TY_SETTINGS_BACKEND
+	prompt "Storage back-end"
+	default TY_SETTINGS_NVS if NVS
+	default TY_SETTINGS_NONE
+	help
+		Storage back-end to be used by the settings subsystem.
+
+config TY_SETTINGS_NVS
+	bool "NVS non-volatile storage support"
+	depends on NVS
+	help
+		Uses the NVS storage backend.
+
+if TY_SETTINGS_NVS
+
+config TY_SETTINGS_NVS_NAME_CACHE
+	bool "NVS name lookup cache"
+	help
+		Enable NVS name lookup cache, used to reduce the Settings name
+		lookup time.
+
+config TY_SETTINGS_NVS_NAME_CACHE_SIZE
+	int "NVS name lookup cache size"
+	default 128
+	range 1 65535
+	depends on TY_SETTINGS_NVS_NAME_CACHE
+	help
+		Number of entries in Settings NVS name cache.
+
+endif # TY_SETTINGS_NVS
+
+config TY_SETTINGS_NONE
+	bool "NONE"
+	help
+		No storage back-end.
+
+endchoice # TY_SETTINGS_BACKEND
+
+config TY_SETTINGS_LOG
+	bool "Enable logging"
+	default "y"
+	select LOG_COLORS if ESP_PLATFORM
+	select LOG_DBG_COLOR_BLUE if ZEPHYR_PLATFORM
+	help
+		Selects whether logging messages.
+
+endmenu # TySettings configuration
+endif # TY_SETTINGS
