@@ -61,7 +61,7 @@ AppPersistentSettings mAppPersistentSettings = {.key = 4242, .a = 10, .b = 10};
 tyError initSettings(tyInstance *aInstance)
 {
     uint16_t settings_length = 0;
-    tyPlatSettingsInit(aInstance, NULL, 0);
+    tyPlatSettingsInit(aInstance, nullptr, 0);
     // check if the settings are already there
     // if not, set the default values
     if (tyPlatSettingsGet(aInstance, mAppPersistentSettings.key, 0, (uint8_t *)&mAppPersistentSettings,
@@ -87,17 +87,15 @@ void *appInit(void *)
     // Initialize the settings subsystem
     initSettings(instance);
 
-    auto mqtt = ty::Mqtt::create(*instance);
-    if (mqtt.has_value())
-    {
-        ty::Mqtt::MqttConfiguration mqttConfig = {kMqttUrl, kMqttClientId};
-        mqtt->get()->Init(mqttConfig);
-    }
+    ty::Mqtt::MqttConfiguration mqttConfig = {kMqttUrl, kMqttClientId};
+
+    auto mqtt = ty::Mqtt::create(mqttConfig);
+    mqtt->connect();
 
     // initialize the Tybus subscriber
     tyBusSubscribe(&mSubscriber);
 
-    tyBusPublish(MAIN_EVENT_HELLO_WORLD, NULL, 0);
+    tyBusPublish(MAIN_EVENT_HELLO_WORLD, nullptr, 0);
     while (true)
     {
         // next event in 1 second
@@ -105,5 +103,4 @@ void *appInit(void *)
         tyLogInfo(kLogModule, "Sleep done");
     }
     tyInstanceFinalize(instance);
-    return NULL;
 }

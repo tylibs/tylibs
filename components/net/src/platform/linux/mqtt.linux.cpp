@@ -23,28 +23,25 @@ namespace ty {
 class PosixMqtt : public Mqtt
 {
 public:
+    PosixMqtt(Mqtt::MqttConfiguration &aConfiguration)
+        : Mqtt(aConfiguration)
+    {
+        mClient = etl::unique_ptr<mqtt::client>(new mqtt::client(std::string(aConfiguration.serverUri.c_str()),
+                                                                 std::string(aConfiguration.clientId.c_str())));
+    };
     etl::unique_ptr<mqtt::client> mClient;
 };
 
-Mqtt::Mqtt() {}
-
-Mqtt::~Mqtt() {}
-
-auto Mqtt::create(tyInstance const &aInstance) -> etl::optional<etl::unique_ptr<Mqtt>>
+auto Mqtt::create(Mqtt::MqttConfiguration &aConfiguration) -> etl::unique_ptr<Mqtt>
 {
-    auto pImpl = etl::unique_ptr<Mqtt>(new PosixMqtt());
-    if (pImpl)
-    {
-        return etl::optional(etl::move(pImpl));
-    }
-    return etl::nullopt;
+    auto pImpl = etl::unique_ptr<Mqtt>(new PosixMqtt(aConfiguration));
+    return pImpl;
 }
 
-void Mqtt::Init(Mqtt::MqttConfiguration &aConfiguration)
+void Mqtt::connect()
 {
-    auto &self   = *(static_cast<PosixMqtt *>(this));
-    self.mClient = etl::unique_ptr<mqtt::client>(
-        new mqtt::client(std::string(aConfiguration.serverUri.c_str()), std::string(aConfiguration.clientId.c_str())));
-    tyLogInfo("posix.mqtt", "MQTT Client initialized");
+    auto &self = *(static_cast<PosixMqtt *>(this));
+    self.mClient->connect();
+    tyLogInfo("posix.mqtt", "MQTT Connect");
 }
 } // namespace ty

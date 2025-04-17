@@ -26,19 +26,22 @@ public:
         const etl::istring &clientId;
     };
 
+protected:
+    Mqtt(const MqttConfiguration &aConfiguration)
+        : mConfiguration(aConfiguration)
+    {
+    }
+
 public:
-    Mqtt();
-    ~Mqtt();
     size_t printDriverInfo(Print &out) const;
+    auto   connect() -> void;
 
 public:
-    void Init(MqttConfiguration &aConfiguration);
-
-public:
-    static auto create(tyInstance const &) -> etl::optional<etl::unique_ptr<Mqtt>>;
+    static auto create(MqttConfiguration &) -> etl::unique_ptr<Mqtt>;
     static auto destroy(etl::unique_ptr<Connection> &) -> void;
 
 private:
+    const MqttConfiguration &mConfiguration;
 };
 } // namespace ty
 

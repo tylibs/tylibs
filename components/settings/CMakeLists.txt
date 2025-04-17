@@ -26,6 +26,8 @@ tylibs_component_register(
   PRIV_REQUIRES
   ${priv_requires})
 
-if(${target} STREQUAL "esp")
-  target_link_libraries(${COMPONENT_LIB} PRIVATE __idf_nvs_flash)
+if(CONFIG_TYSETTINGS)
+  if(${target} STREQUAL "esp")
+    target_link_libraries(${COMPONENT_LIB} PRIVATE __idf_nvs_flash)
+  endif()
 endif()
