@@ -17,7 +17,9 @@ namespace ble {
 struct BleComPlat : public BleCom
 {
     explicit BleComPlat(BleCom::Configuration &aConfiguration)
-        : BleCom(aConfiguration) {};
+        : BleCom(aConfiguration)
+    {
+    }
     // explicit BleComPlat(BleCom::Configuration &aConfiguration)
     //     : BleCom() {};
 };
@@ -28,16 +30,10 @@ auto BleCom::create(BleCom::Configuration &aConfiguration) -> etl::unique_ptr<Bl
     return pImpl;
 }
 
-// void BleCom::connect()
-// {
-//     auto &self = *(static_cast<BleComPlat *>(this));
-//     try
-//     {
-//     } catch (const mqtt::exception &e)
-//     {
-//         tyLogCrit("linux.blecom", "Failed");
-//         return;
-//     }
-// }
+void BleCom::init()
+{
+    auto &self    = *(static_cast<BleComPlat *>(this));
+    self.d_ptr->x = 1;
+}
 } // namespace ble
 } // namespace ty

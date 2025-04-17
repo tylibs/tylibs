@@ -5,5 +5,6 @@
 
 namespace ty {
 namespace ble {
+void BleComPrivate::connect() {}
 } // namespace ble
 } // namespace ty

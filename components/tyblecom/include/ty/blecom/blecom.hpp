@@ -7,12 +7,18 @@
 #include <etl/string.h>
 
 #include "etl/memory.h"
-
+#include "ty/pimpl.hpp"
 #if CONFIG_TY_BLECOM
 
 namespace ty {
 namespace ble {
-class BleCom
+class BleComPrivate
+{
+public:
+    void connect();
+    int  x;
+};
+class BleCom : public Pimpl<BleCom, BleComPrivate>
 {
 public:
     struct Configuration
@@ -31,6 +37,8 @@ protected:
 public:
     [[nodiscard]] static auto create(Configuration &) -> etl::unique_ptr<BleCom>;
     static auto               destroy(etl::unique_ptr<BleCom> &) -> void;
+
+    void init();
 
 private:
     const Configuration &mConfiguration;
