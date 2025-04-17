@@ -1,6 +1,6 @@
 #
 # Automatically generated file. DO NOT EDIT.
-# TYLiBS  Project Configuration
+# TYLiBS 5.4.0 Project Configuration
 #
 # default:
 CONFIG_TYLIBS_CMAKE=y
@@ -38,6 +38,8 @@ CONFIG_TYBUS_ASSERTS=y
 #
 # Tiny configuration
 #
+CONFIG_ZEPHYR_PLATFORM=y
+# CONFIG_ESP_PLATFORM is not set
 CONFIG_TY_LOG=y
 # default:
 CONFIG_TY_ASSERTS=y

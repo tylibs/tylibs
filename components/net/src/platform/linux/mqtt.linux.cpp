@@ -14,10 +14,6 @@
 
 #include "mqtt/client.h"
 
-const std::string DFLT_SERVER_URI("mqtt://localhost:1883");
-const std::string CLIENT_ID("paho_cpp_async_subscribe");
-const std::string TOPIC("#");
-
 namespace ty {
 // everything public is fine here...
 class PosixMqtt : public Mqtt

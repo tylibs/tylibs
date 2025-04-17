@@ -1,6 +1,7 @@
 config TYNET
 	bool "TyNet Library"
 	select SETTINGS if ZEPHYR_PLATFORM
+	select COMPILER_CXX_EXCEPTIONS if ESP_PLATFORM
 	help
 		This option enables the TyNet Library
 

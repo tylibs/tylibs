@@ -40,6 +40,10 @@ esp.flash: esp.build ## Flash the firmware to ESP32
 esp.clean:
 	$(RMDIR) ${BUILD_DIR} && $(RM) ${APP_DIR}/tyconfig && $(RM) ${APP_DIR}/sdkconfig
 
+esp.size: ## (re)compile for the selected TARGET
+	@echo "Building for ${var1}"
+	${IDFPY} -C ${APP_DIR} -B ${BUILD_DIR} -DTYLIBS_TARGET=esp -DIDF_TARGET=${ESP_TARGET} -DTY_PYTHON_DEPS_CHECKED=1 size-components
+
 # Zephyr specific targets
 # ---------------------------------------------------------------------------
 .PHONY: zephyr zephyr.build zephyr.clean

@@ -1,4 +1,19 @@
 menu "Tiny configuration"
+choice TY_PLATFORM
+	prompt "BUILD System"
+	default ESP_PLATFORM if IDF_CMAKE
+	default ZEPHYR_PLATFORM if ZEPHYR_CMSIS_MODULE
+	help
+		Use this option in Kconfig to select in if statement the platform to build for.
+config ZEPHYR_PLATFORM
+	bool "Zephyr"
+	help
+		Zephyr RTOS platform.
+config ESP_PLATFORM
+	bool "ESP"
+	help
+		ESP32 platform.
+endchoice
 
 	config TY_LOG
 		bool "Enable logging"
