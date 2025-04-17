@@ -33,13 +33,13 @@ function(depgraph_add_edge dep_from dep_to)
   endif()
 
   if(dep_to IN_LIST common_reqs)
-    # Don't record graph edges leading to "common" components, since every
+    # Don't record graph edges leading to "tycommon" components, since every
     # component has these dependencies. However, show which components are
-    # "common" by adding an edge from a node named "common". If necessary, add a
-    # new build property to customize this behavior.
+    # "tycommon" by adding an edge from a node named "tycommon". If necessary,
+    # add a new build property to customize this behavior.
     if(NOT dep_from IN_LIST common_reqs)
       tylibs_build_set_property(__TY_BUILD_COMPONENT_DEPGRAPH
-                                "common -> ${dep_to}" APPEND)
+                                "tycommon -> ${dep_to}" APPEND)
     endif()
   else()
     tylibs_build_set_property(__TY_BUILD_COMPONENT_DEPGRAPH

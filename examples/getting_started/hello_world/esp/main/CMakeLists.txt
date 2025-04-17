@@ -6,10 +6,10 @@ include($ENV{TYLIBS_PATH}/tools/cmake/tylibs.cmake)
 tylibs_build_process(
   "esp"
   COMPONENTS
-  common
-  bus
-  settings
-  net
+  tycommon
+  tybus
+  tysettings
+  tynet
   TYCONFIG
   ${CMAKE_CURRENT_LIST_DIR}/../../tyconfig
   TYCONFIG_DEFAULTS
@@ -18,5 +18,5 @@ tylibs_build_process(
   ${CMAKE_BINARY_DIR})
 
 target_link_libraries(
-  ${COMPONENT_LIB} PRIVATE tylibs::common tylibs::bus tylibs::settings
-                           tylibs::net tyapp)
+  ${COMPONENT_LIB} PRIVATE tylibs::tycommon tylibs::tybus tylibs::tysettings
+                           tylibs::tynet tyapp)

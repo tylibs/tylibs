@@ -1907,7 +1907,7 @@ def get_tylibs_version() -> str:
                 os.path.join(
                     g.tylibs_path,
                     "components",
-                    "common",
+                    "tycommon",
                     "include",
                     "tylibs_version.h",
                 ),
