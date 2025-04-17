@@ -20,7 +20,7 @@
 // #include <ty/platform/misc.h>
 // #include <ty/platform/radio.h>
 
-#include <ty/settings //platform/settings.h>
+#include <ty/settings/platform/settings.h>
 #if TY_POSIX_CONFIG_SECURE_SETTINGS_ENABLE
 #include <ty/platform/secure_settings.h>
 #endif
