@@ -9,20 +9,20 @@
  *   BYG implementation
  */
 #include "app.h"
-#include <tybus/tybus.h>
-#include <tysettings/platform/settings.h>
 #include <ty/logging.h>
+#include <ty/bus/tybus.h>
 #include <ty/platform/toolchain.h>
+#include <ty/settings/platform/settings.h>
 #include "ty/error.h"
+#include "ty/net/mqtt/mqtt.hpp"
 #include "ty/platform/thread.h"
-#include "tynet/mqtt/mqtt.hpp"
 
 static const char    *kLogModule    = "App";
 const etl::string<32> kMqttUrl      = "mqtt://localhost:1883";
 const etl::string<32> kMqttClientId = "mqtt_client";
 
-TYBUS_EVENT_NAME(MAIN, HELLO_WORLD, "HelloWorld");
-TYBUS_STATE_NAME(MAIN, START, "Start");
+TY_BUS_EVENT_NAME(MAIN, HELLO_WORLD, "HelloWorld");
+TY_BUS_STATE_NAME(MAIN, START, "Start");
 // 2. Declare the actions using in the state table
 void actionHelloWorld(const TyBusEvent *aEvent);
 
@@ -39,7 +39,7 @@ const TyBusStateTableRow mStateTable[] = {{
     .stop           = true                    // Stop processing after this entry (this is the default case)
 }};
 TyBusSubscriber          mSubscriber =
-    TYBUS_SUBSCRIBER("app", mStateTable, TYBUS_TABLE_ROW_COUNT(mStateTable), MAIN_STATE_START);
+    TY_BUS_SUBSCRIBER("app", mStateTable, TY_BUS_TABLE_ROW_COUNT(mStateTable), MAIN_STATE_START);
 
 void actionHelloWorld(const TyBusEvent *aEvent)
 {

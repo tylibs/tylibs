@@ -1,6 +1,6 @@
 #
 # Automatically generated file. DO NOT EDIT.
-# TYLiBS 5.4.0 Project Configuration
+# TYLiBS  Project Configuration
 #
 # default:
 CONFIG_TYLIBS_CMAKE=y
@@ -8,31 +8,31 @@ CONFIG_TYLIBS_CMAKE=y
 #
 # Component config
 #
-CONFIG_TYBLECOM=y
+CONFIG_TY_BLECOM=y
 
 #
 # TyNet configuration
 #
 # default:
-CONFIG_TYBLECOM_LOG=y
+CONFIG_TY_BLECOM_LOG=y
 # end of TyNet configuration
 
-CONFIG_TYBUS=y
+CONFIG_TY_BUS=y
 
 #
 # TyBus configuration
 #
 # default:
-CONFIG_TYBUS_MAX_SUBSCRIBERS=64
+CONFIG_TY_BUS_MAX_SUBSCRIBERS=64
 # default:
-CONFIG_TYBUS_MAX_BACKLOG=16
-# CONFIG_TYBUS_MALLOC_STRATEGY_DISABLE is not set
-CONFIG_TYBUS_MALLOC_STRATEGY_DEFAULT=y
-# CONFIG_TYBUS_MALLOC_STRATEGY_INTERNAL is not set
+CONFIG_TY_BUS_MAX_BACKLOG=16
+# CONFIG_TY_BUS_MALLOC_STRATEGY_DISABLE is not set
+CONFIG_TY_BUS_MALLOC_STRATEGY_DEFAULT=y
+# CONFIG_TY_BUS_MALLOC_STRATEGY_INTERNAL is not set
 # default:
-CONFIG_TYBUS_LOG=y
+CONFIG_TY_BUS_LOG=y
 # default:
-CONFIG_TYBUS_ASSERTS=y
+CONFIG_TY_BUS_ASSERTS=y
 # end of TyBus configuration
 
 #
@@ -52,25 +52,25 @@ CONFIG_TY_LOG_LEVEL_INFO=y
 CONFIG_TY_LOG_LEVEL=4
 # end of Tiny configuration
 
-CONFIG_TYNET=y
+CONFIG_TY_NET=y
 
 #
 # TyNet configuration
 #
-CONFIG_TYNET_MQTT_ENABLED=y
+CONFIG_TY_NET_MQTT_ENABLED=y
 # default:
-CONFIG_TYNET_LOG=y
+CONFIG_TY_NET_LOG=y
 # end of TyNet configuration
 
-CONFIG_TYSETTINGS=y
+CONFIG_TY_SETTINGS=y
 
 #
 # TySettings configuration
 #
 # default:
-CONFIG_TYSETTINGS_DUALBANK=y
-CONFIG_TYSETTINGS_NONE=y
+CONFIG_TY_SETTINGS_DUALBANK=y
+CONFIG_TY_SETTINGS_NONE=y
 # default:
-CONFIG_TYSETTINGS_LOG=y
+CONFIG_TY_SETTINGS_LOG=y
 # end of TySettings configuration
 # end of Component config
