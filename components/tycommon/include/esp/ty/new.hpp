@@ -3,68 +3,20 @@
 
 /**
  * @file
- *   This file defines the new operator used by OpenThread.
+ *   This template can be used to allocate memory in SPIRAM or internal
  */
 
-#ifndef COMMON_NEW_HPP_
-#define COMMON_NEW_HPP_
-
-#include <stddef.h>
+#pragma once
 
 #include "esp_heap_caps.h"
-#include "ty/platform/toolchain.h"
+#include <utility>
 
-#ifdef __cplusplus
-extern "C" {
-#include "ty/new.hpp"
-#endif
-
-// inline void *operator new(size_t, void *p) throw()
-// {
-//     return p;
-// }
-void *operator new(size_t size)
+template <typename T, typename... Args> inline T *New(uint32_t alloc_caps, Args &&...args)
 {
-    void *ptr = heap_caps_malloc(size, MALLOC_CAP_SPIRAM);
-    if (!ptr)
+    void *p = heap_caps_calloc(1, sizeof(T), alloc_caps);
+    if (p != nullptr)
     {
-        abort();
+        return new (p) T(std::forward<Args>(args)...);
     }
-    return ptr;
+    return nullptr;
 }
-
-void *operator new[](size_t size)
-{
-    void *ptr = heap_caps_malloc(size, MALLOC_CAP_SPIRAM);
-    if (!ptr)
-    {
-        abort();
-    }
-    return ptr;
-}
-
-void operator delete(void *ptr) noexcept
-{
-    free(ptr);
-}
-
-void operator delete(void *ptr, std::size_t) noexcept
-{
-    free(ptr);
-}
-
-void operator delete[](void *ptr) noexcept
-{
-    free(ptr);
-}
-
-void operator delete[](void *ptr, std::size_t) noexcept
-{
-    free(ptr);
-}
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
-
-#endif // OT_INCLUDE_COMMON_NEW_HPP_

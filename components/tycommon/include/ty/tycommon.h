@@ -7,6 +7,7 @@
 #include "tyconfig.h"
 
 #include "error.h"
+#include "common/code_utils.hpp"
 #include "config/logging.h"
 #include "config/misc.h"
 
