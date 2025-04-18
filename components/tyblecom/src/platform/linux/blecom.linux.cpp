@@ -4,13 +4,12 @@
  * @file
  *   This file implements the Tiny platform abstraction for non-volatile storage of settings.
  */
-
-#include <ty/exit_code.h>
-#include <ty/logging.h>
-#include <ty/common/debug.hpp>
+#include "ty/tycommon.h"
 
 #include "blecom_p.hpp"
 #include "ty/blecom/blecom.hpp"
+
+#include <etl/string.h>
 
 namespace ty {
 namespace ble {
@@ -21,19 +20,22 @@ struct BleComPlat : public BleCom
         : BleCom(aConfiguration)
     {
     }
-    // explicit BleComPlat(BleCom::Configuration &aConfiguration)
-    //     : BleCom() {};
-};
 
-auto BleCom::create(BleCom::Configuration &aConfiguration) -> etl::unique_ptr<BleCom>
+    etl::string<2048> data;
+};
+static TY_DEFINE_ALIGNED_VAR(sBleComPlatRaw, sizeof(BleComPlat), uint64_t);
+BleCom *BleCom::sBleCom = nullptr;
+
+void BleCom::create(BleCom::Configuration &aConfiguration)
 {
-    auto pImpl = etl::unique_ptr<BleCom>(new BleComPlat(aConfiguration));
-    return pImpl;
+    BleCom::sBleCom = new (&sBleComPlatRaw) BleComPlat(aConfiguration);
+    // auto pImpl = etl::unique_ptr<BleCom>(New<BleComPlat>(MALLOC_CAP_INTERNAL, aConfiguration));
 }
 
 void BleCom::init()
 {
     auto &self = *(static_cast<BleComPlat *>(this));
+    self.data  = "hello";
     self.d_func()->connect();
 }
 } // namespace ble

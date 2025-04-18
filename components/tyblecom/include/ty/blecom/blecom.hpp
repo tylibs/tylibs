@@ -4,11 +4,12 @@
 #ifndef TY_BLECOM_HPP_
 #define TY_BLECOM_HPP_
 
-#include "tyconfig.h"
+#include <etl/memory.h>
 #include <etl/string.h>
 
-#include "etl/memory.h"
 #include "ty/pimpl.hpp"
+#include "ty/tycommon.h"
+
 #if CONFIG_TY_BLECOM
 
 namespace ty {
@@ -31,10 +32,16 @@ protected:
     explicit BleCom(const Configuration &aConfiguration);
 
 public:
-    [[nodiscard]] static auto create(Configuration &) -> etl::unique_ptr<BleCom>;
-    static auto               destroy(etl::unique_ptr<BleCom> &) -> void;
+    static void    create(Configuration &);
+    void           init();
+    static BleCom &get(void)
+    {
+        TY_ASSERT(sBleCom != nullptr);
+        return *sBleCom;
+    }
 
-    void init();
+protected:
+    static BleCom *sBleCom;
 
 private:
     const Configuration &mConfiguration;

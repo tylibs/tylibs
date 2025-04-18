@@ -78,9 +78,8 @@ tyError initSettings()
 void initBleCom()
 {
     ty::ble::BleCom::Configuration bleConfig = {.name = "BYG"};
-
-    auto ble = ty::ble::BleCom::create(bleConfig);
-    ble->init();
+    ty::ble::BleCom::create(bleConfig);
+    ty::ble::BleCom::get().init();
 }
 } // namespace
 

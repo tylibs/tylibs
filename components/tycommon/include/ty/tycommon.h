@@ -8,6 +8,7 @@
 
 #include "error.h"
 #include "common/code_utils.hpp"
+#include "common/debug.hpp"
 #include "config/logging.h"
 #include "config/misc.h"
 

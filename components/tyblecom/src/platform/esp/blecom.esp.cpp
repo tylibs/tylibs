@@ -8,11 +8,7 @@
 #include "ty/tycommon.h"
 
 #include "blecom_p.hpp"
-#include <ty/exit_code.h>
-#include <ty/logging.h>
-#include <ty/common/debug.hpp>
 #include "ty/blecom/blecom.hpp"
-#include "ty/new.hpp"
 
 #include <etl/string.h>
 
@@ -29,11 +25,12 @@ struct BleComPlat : public BleCom
     etl::string<2048> data;
 };
 static TY_DEFINE_ALIGNED_VAR(sBleComPlatRaw, sizeof(BleComPlat), uint64_t);
-auto BleCom::create(BleCom::Configuration &aConfiguration) -> etl::unique_ptr<BleCom>
+BleCom *BleCom::sBleCom = nullptr;
+
+void BleCom::create(BleCom::Configuration &aConfiguration)
 {
-    auto pImpl = etl::unique_ptr<BleCom>(new (sBleComPlatRaw) BleComPlat(aConfiguration));
+    BleCom::sBleCom = new (&sBleComPlatRaw) BleComPlat(aConfiguration);
     // auto pImpl = etl::unique_ptr<BleCom>(New<BleComPlat>(MALLOC_CAP_INTERNAL, aConfiguration));
-    return pImpl;
 }
 
 void BleCom::init()
