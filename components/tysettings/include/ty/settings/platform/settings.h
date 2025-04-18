@@ -10,6 +10,9 @@
 #ifndef TY_SETTINGS_SETTINGS_H
 #define TY_SETTINGS_SETTINGS_H
 
+#include <stdint.h>
+#include <ty/error.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

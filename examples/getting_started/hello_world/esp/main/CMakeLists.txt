@@ -10,6 +10,7 @@ tylibs_build_process(
   tybus
   tysettings
   tynet
+  tyblecom
   TYCONFIG
   ${CMAKE_CURRENT_LIST_DIR}/../../tyconfig
   TYCONFIG_DEFAULTS
@@ -19,4 +20,4 @@ tylibs_build_process(
 
 target_link_libraries(
   ${COMPONENT_LIB} PRIVATE tylibs::tycommon tylibs::tybus tylibs::tysettings
-                           tylibs::tynet tyapp)
+                           tylibs::tynet tylibs::tyblecom tyapp)

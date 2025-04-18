@@ -14,7 +14,7 @@ if(CONFIG_TY_BLECOM)
     # include MQTT library
     find_package(sdbus-c++ REQUIRED)
   elseif(${target} STREQUAL "esp")
-    # list(APPEND srcs "src/platform/esp/mqtt.esp.cpp")
+    list(APPEND srcs "src/platform/linux/blecom.linux.cpp")
     list(APPEND priv_includes "src/platform/esp/")
   endif()
 endif()

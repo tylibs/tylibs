@@ -6,12 +6,13 @@
  * @brief
  *   This file includes the platform abstraction for the debug log service.
  */
+
+#include "tyconfig.h"
 #include <esp_log.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <ty/platform/toolchain.h>
 
-#include "platform-esp.h"
 #include "ty/logging.h"
 #if (TY_CONFIG_LOG_OUTPUT == TY_CONFIG_LOG_OUTPUT_PLATFORM_DEFINED) || \
     (TY_CONFIG_LOG_OUTPUT == TY_CONFIG_LOG_OUTPUT_NCP_SPINEL)
