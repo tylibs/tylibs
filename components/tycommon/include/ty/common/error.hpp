@@ -9,7 +9,7 @@
 #ifndef ERROR_HPP_
 #define ERROR_HPP_
 
-#include "ty/ty-core-config.h"
+#include "ty/tycommon.h"
 
 #include <ty/error.h>
 

@@ -19,6 +19,7 @@ if(${target} STREQUAL "linux")
   list(APPEND priv_includes "src/platform/linux/")
 elseif(${target} STREQUAL "esp")
   list(APPEND srcs "src/platform/esp/logging.c" "src/platform/esp/thread.c")
+  list(APPEND includes "include/esp/")
   list(APPEND priv_includes "src/platform/esp/")
 endif()
 

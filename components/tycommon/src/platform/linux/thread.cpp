@@ -7,7 +7,7 @@
  *   This file includes platform abstractions for miscellaneous behaviors.
  */
 
-#include "ty/ty-core-config.h"
+#include "ty/tycommon.h"
 
 #include "ty/platform/thread.h"
 

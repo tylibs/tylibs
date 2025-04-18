@@ -9,7 +9,7 @@
 #ifndef STRING_HPP_
 #define STRING_HPP_
 
-#include "ty/ty-core-config.h"
+#include "ty/tycommon.h"
 
 #include <stdarg.h>
 #include <stdint.h>

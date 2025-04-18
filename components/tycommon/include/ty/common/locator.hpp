@@ -9,7 +9,7 @@
 #ifndef LOCATOR_HPP_
 #define LOCATOR_HPP_
 
-#include "ty/ty-core-config.h"
+#include "ty/tycommon.h"
 
 #include <ty/platform/toolchain.h>
 

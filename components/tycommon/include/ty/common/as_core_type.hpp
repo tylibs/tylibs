@@ -9,7 +9,7 @@
 #ifndef AS_CORE_TYPE_HPP_
 #define AS_CORE_TYPE_HPP_
 
-#include "ty/ty-core-config.h"
+#include "ty/tycommon.h"
 
 #include "ty/common/debug.hpp"
 

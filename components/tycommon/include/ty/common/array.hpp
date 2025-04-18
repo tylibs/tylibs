@@ -9,7 +9,7 @@
 #ifndef ARRAY_HPP_
 #define ARRAY_HPP_
 
-#include "ty/ty-core-config.h"
+#include "ty/tycommon.h"
 
 #include "ty/common/code_utils.hpp"
 // #include "ty/common/const_cast.hpp"

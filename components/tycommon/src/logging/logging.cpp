@@ -6,7 +6,7 @@
  * @file
  *   This file implements the OpenThread logging related APIs.
  */
-#include "ty/ty-core-config.h"
+#include "ty/tycommon.h"
 
 #include "ty/common/code_utils.hpp"
 #include "ty/common/debug.hpp"

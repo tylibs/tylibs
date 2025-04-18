@@ -4,7 +4,7 @@
 #ifndef BINARY_SEARCH_HPP_
 #define BINARY_SEARCH_HPP_
 
-#include "ty/ty-core-config.h"
+#include "ty/tycommon.h"
 
 #include <stdint.h>
 
