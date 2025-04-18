@@ -1,7 +1,8 @@
 // SPDX-FileCopyrightText: Copyright 2025 Clever Design (Switzerland) GmbH
 // SPDX-License-Identifier: Apache-2.0
 
-#pragma once
+#ifndef TY_BLECOM_HPP_
+#define TY_BLECOM_HPP_
 
 #include "tyconfig.h"
 #include <etl/string.h>
@@ -12,12 +13,7 @@
 
 namespace ty {
 namespace ble {
-class BleComPrivate
-{
-public:
-    void connect();
-    int  x;
-};
+class BleComPrivate;
 class BleCom : public Pimpl<BleCom, BleComPrivate>
 {
 public:
@@ -25,14 +21,14 @@ public:
     {
         const etl::string<31> &name;
     };
-    BleCom()  = delete;
-    ~BleCom() = default;
+    // delete default and copy constructor
+    BleCom()                    = delete;
+    BleCom(const BleCom &other) = delete;
+    // needed by Pimpl
+    ~BleCom();
 
 protected:
-    explicit BleCom(const Configuration &aConfiguration)
-        : mConfiguration(aConfiguration)
-    {
-    }
+    explicit BleCom(const Configuration &aConfiguration);
 
 public:
     [[nodiscard]] static auto create(Configuration &) -> etl::unique_ptr<BleCom>;
@@ -47,3 +43,4 @@ private:
 } // namespace ty
 
 #endif /* CONFIG_TY_BLECOM */
+#endif // TY_BLECOM_HPP_

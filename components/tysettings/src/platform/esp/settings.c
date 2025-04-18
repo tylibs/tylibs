@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ty/instance.h>
 
 #define TY_NAMESPACE "ty"
 #define TY_PART_NAME s_storage_name
@@ -147,7 +146,7 @@ static esp_err_t erase_all_key(uint16_t aKey)
     return ESP_OK;
 }
 
-void tyPlatSettingsInit(tyInstance *aInstance, const uint16_t *aSensitiveKeys, uint16_t aSensitiveKeysLength)
+void tyPlatSettingsInit(const uint16_t *aSensitiveKeys, uint16_t aSensitiveKeysLength)
 {
     esp_err_t err = nvs_open(TY_NAMESPACE, NVS_READWRITE, &s_ot_nvs_handle);
     if (err != ESP_OK)
@@ -157,7 +156,7 @@ void tyPlatSettingsInit(tyInstance *aInstance, const uint16_t *aSensitiveKeys, u
     }
 }
 
-void tyPlatSettingsDeinit(tyInstance *aInstance)
+void tyPlatSettingsDeinit()
 {
     if (s_ot_nvs_handle != 0)
     {
@@ -165,7 +164,7 @@ void tyPlatSettingsDeinit(tyInstance *aInstance)
     }
 }
 
-tyError tyPlatSettingsGet(tyInstance *aInstance, uint16_t aKey, int aIndex, uint8_t *aValue, uint16_t *aValueLength)
+tyError tyPlatSettingsGet(uint16_t aKey, int aIndex, uint8_t *aValue, uint16_t *aValueLength)
 {
     ESP_RETURN_ON_FALSE((s_ot_nvs_handle != 0), TY_ERROR_NOT_FOUND, TY_PLAT_LOG_TAG, "OT NVS handle is invalid.");
     esp_err_t ret                                  = ESP_OK;
@@ -183,7 +182,7 @@ tyError tyPlatSettingsGet(tyInstance *aInstance, uint16_t aKey, int aIndex, uint
     return TY_ERROR_NONE;
 }
 
-tyError tyPlatSettingsSet(tyInstance *aInstance, uint16_t aKey, const uint8_t *aValue, uint16_t aValueLength)
+tyError tyPlatSettingsSet(uint16_t aKey, const uint8_t *aValue, uint16_t aValueLength)
 {
     ESP_RETURN_ON_FALSE((s_ot_nvs_handle != 0), TY_ERROR_NOT_FOUND, TY_PLAT_LOG_TAG, "OT NVS handle is invalid.");
     esp_err_t ret                                  = ESP_OK;
@@ -197,7 +196,7 @@ tyError tyPlatSettingsSet(tyInstance *aInstance, uint16_t aKey, const uint8_t *a
     return TY_ERROR_NONE;
 }
 
-tyError tyPlatSettingsAdd(tyInstance *aInstance, uint16_t aKey, const uint8_t *aValue, uint16_t aValueLength)
+tyError tyPlatSettingsAdd(uint16_t aKey, const uint8_t *aValue, uint16_t aValueLength)
 {
     ESP_RETURN_ON_FALSE((s_ot_nvs_handle != 0), TY_ERROR_NOT_FOUND, TY_PLAT_LOG_TAG, "OT NVS handle is invalid.");
     esp_err_t ret = ESP_OK;
@@ -214,7 +213,7 @@ tyError tyPlatSettingsAdd(tyInstance *aInstance, uint16_t aKey, const uint8_t *a
     return TY_ERROR_NONE;
 }
 
-tyError tyPlatSettingsDelete(tyInstance *aInstance, uint16_t aKey, int aIndex)
+tyError tyPlatSettingsDelete(uint16_t aKey, int aIndex)
 {
     /* ESP_RETURN_ON_FALSE((s_ot_nvs_handle != 0), TY_ERROR_NOT_FOUND, TY_PLAT_LOG_TAG, "OT NVS handle is
      * invalid.");
@@ -239,7 +238,7 @@ tyError tyPlatSettingsDelete(tyInstance *aInstance, uint16_t aKey, int aIndex)
     return TY_ERROR_NONE;
 }
 
-void tyPlatSettingsWipe(tyInstance *aInstance)
+void tyPlatSettingsWipe()
 {
     nvs_erase_all(s_ot_nvs_handle);
 }

@@ -10,8 +10,6 @@
 #ifndef TY_SETTINGS_SETTINGS_H
 #define TY_SETTINGS_SETTINGS_H
 
-#include <ty/instance.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -46,14 +44,14 @@ enum
  *                                   @p aSensitiveKeysLength is 0, which means that there is no sensitive keys.
  * @param[in]  aSensitiveKeysLength  The number of entries in the @p aSensitiveKeys array.
  */
-void tyPlatSettingsInit(tyInstance *aInstance, const uint16_t *aSensitiveKeys, uint16_t aSensitiveKeysLength);
+void tyPlatSettingsInit(const uint16_t *aSensitiveKeys, uint16_t aSensitiveKeysLength);
 
 /**
  * Performs any de-initialization for the settings subsystem, if necessary.
  *
  * @param[in]  aInstance The OpenThread instance structure.
  */
-void tyPlatSettingsDeinit(tyInstance *aInstance);
+void tyPlatSettingsDeinit();
 
 /**
  * Fetches the value of a setting.
@@ -89,7 +87,7 @@ void tyPlatSettingsDeinit(tyInstance *aInstance);
  * @retval TY_ERROR_NOT_FOUND        The given setting was not found in the setting store.
  * @retval TY_ERROR_NOT_IMPLEMENTED  This function is not implemented on this platform.
  */
-tyError tyPlatSettingsGet(tyInstance *aInstance, uint16_t aKey, int aIndex, uint8_t *aValue, uint16_t *aValueLength);
+tyError tyPlatSettingsGet(uint16_t aKey, int aIndex, uint8_t *aValue, uint16_t *aValueLength);
 
 /**
  * Sets or replaces the value of a setting.
@@ -118,7 +116,7 @@ tyError tyPlatSettingsGet(tyInstance *aInstance, uint16_t aKey, int aIndex, uint
  * @retval TY_ERROR_NTY_IMPLEMENTED  This function is not implemented on this platform.
  * @retval TY_ERROR_NO_BUFS          No space remaining to store the given setting.
  */
-tyError tyPlatSettingsSet(tyInstance *aInstance, uint16_t aKey, const uint8_t *aValue, uint16_t aValueLength);
+tyError tyPlatSettingsSet(uint16_t aKey, const uint8_t *aValue, uint16_t aValueLength);
 
 /**
  * Adds a value to a setting.
@@ -154,7 +152,7 @@ tyError tyPlatSettingsSet(tyInstance *aInstance, uint16_t aKey, const uint8_t *a
  * @retval TY_ERROR_NTY_IMPLEMENTED  This function is not implemented on this platform.
  * @retval TY_ERROR_NO_BUFS          No space remaining to store the given setting.
  */
-tyError tyPlatSettingsAdd(tyInstance *aInstance, uint16_t aKey, const uint8_t *aValue, uint16_t aValueLength);
+tyError tyPlatSettingsAdd(uint16_t aKey, const uint8_t *aValue, uint16_t aValueLength);
 
 /**
  * Removes a setting from the setting store.
@@ -175,7 +173,7 @@ tyError tyPlatSettingsAdd(tyInstance *aInstance, uint16_t aKey, const uint8_t *a
  * @retval TY_ERROR_NOT_FOUND        The given key or index was not found in the setting store.
  * @retval TY_ERROR_NOT_IMPLEMENTED  This function is not implemented on this platform.
  */
-tyError tyPlatSettingsDelete(tyInstance *aInstance, uint16_t aKey, int aIndex);
+tyError tyPlatSettingsDelete(uint16_t aKey, int aIndex);
 
 /**
  * Removes all settings from the setting store.
@@ -185,7 +183,7 @@ tyError tyPlatSettingsDelete(tyInstance *aInstance, uint16_t aKey, int aIndex);
  *
  * @param[in] aInstance  The OpenThread instance structure.
  */
-void tyPlatSettingsWipe(tyInstance *aInstance);
+void tyPlatSettingsWipe();
 
 #ifdef __cplusplus
 } // extern "C"

@@ -9,7 +9,6 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-#include <ty/instance.h>
 #include <ty/logging.h>
 #include <ty/platform/toolchain.h>
 

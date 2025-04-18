@@ -1,8 +1,5 @@
 // SPDX-FileCopyrightText: Copyright 2025 Clever Design (Switzerland) GmbH
 // SPDX-License-Identifier: Apache-2.0
-
-// SPDX-FileCopyrightText: Copyright 2025 Clever Design (Switzerland) GmbH
-// SPDX-License-Identifier: GPL-3.0-only OR OR LicenseRef-BYG-Software-1.0
 /**
  * @file
  * @brief
@@ -59,17 +56,17 @@ struct AppPersistentSettings
 } TY_TOOL_PACKED_END;
 AppPersistentSettings mAppPersistentSettings = {.key = 4242, .a = 10, .b = 10};
 
-tyError initSettings(tyInstance *aInstance)
+tyError initSettings()
 {
     uint16_t settings_length = 0;
-    tyPlatSettingsInit(aInstance, nullptr, 0);
+    tyPlatSettingsInit(nullptr, 0);
     // check if the settings are already there
     // if not, set the default values
-    if (tyPlatSettingsGet(aInstance, mAppPersistentSettings.key, 0, (uint8_t *)&mAppPersistentSettings,
-                          &settings_length) == TY_ERROR_NOT_FOUND ||
+    if (tyPlatSettingsGet(mAppPersistentSettings.key, 0, (uint8_t *)&mAppPersistentSettings, &settings_length) ==
+            TY_ERROR_NOT_FOUND ||
         settings_length != sizeof(mAppPersistentSettings))
     {
-        if (tyPlatSettingsSet(aInstance, mAppPersistentSettings.key, (uint8_t *)&mAppPersistentSettings,
+        if (tyPlatSettingsSet(mAppPersistentSettings.key, (uint8_t *)&mAppPersistentSettings,
                               sizeof(mAppPersistentSettings)) != TY_ERROR_NONE)
         {
             tyLogCrit(kLogModule, "Failed to set settings");
@@ -83,16 +80,15 @@ void initBleCom()
     ty::ble::BleCom::Configuration bleConfig = {.name = "BYG"};
 
     auto ble = ty::ble::BleCom::create(bleConfig);
+    ble->init();
 }
 } // namespace
 
 void *appInit(void *)
 {
     tyLogInfo(kLogModule, "Starting Application, keep fingers crossed");
-    tyInstance *instance;
-    instance = tyInstanceInitSingle();
     // Initialize the settings subsystem
-    initSettings(instance);
+    initSettings();
     initBleCom();
 
     ty::Mqtt::MqttConfiguration mqttConfig = {kMqttUrl, kMqttClientId};
@@ -110,5 +106,4 @@ void *appInit(void *)
         tyPlatDelay(5000);
         tyLogInfo(kLogModule, "Sleep done");
     }
-    tyInstanceFinalize(instance);
 }

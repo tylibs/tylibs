@@ -12,8 +12,6 @@
 
 #include <stdint.h>
 
-#include <ty/instance.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif

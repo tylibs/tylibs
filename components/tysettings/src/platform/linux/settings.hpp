@@ -14,7 +14,7 @@ namespace Posix {
  * @param[out]  aKeys        A pointer to where the pointer to the array containing sensitive keys should be written.
  * @param[out]  aKeysLength  A pointer to where the count of sensitive keys should be written.
  */
-void PlatformSettingsGetSensitiveKeys(tyInstance *aInstance, const uint16_t **aKeys, uint16_t *aKeysLength);
+void PlatformSettingsGetSensitiveKeys(const uint16_t **aKeys, uint16_t *aKeysLength);
 
 } // namespace Posix
 } // namespace ty

@@ -7,7 +7,6 @@ set(priv_includes "src/include")
 list(
   APPEND
   srcs
-  "src/instance/instance.cpp"
   "src/common/string.cpp"
   "src/common/error.cpp"
   "src/common/exit_code.c"

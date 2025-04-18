@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <etl/string.h>
-#include <ty/instance.h>
 
 #include "ty/net/connection.hpp"
 #include "ty/net/network_interface.hpp"

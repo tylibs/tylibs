@@ -7,7 +7,6 @@
 #include <zephyr/settings/settings.h>
 
 #include <ty/error.h>
-#include <ty/instance.h>
 #include <ty/platform/toolchain.h>
 
 /* #include <ty/platform/settings.h> */
@@ -205,7 +204,7 @@ out:
 
 /* Tiny APIs */
 
-void tyPlatSettingsInit(tyInstance *aInstance, const uint16_t *aSensitiveKeys, uint16_t aSensitiveKeysLength)
+void tyPlatSettingsInit(const uint16_t *aSensitiveKeys, uint16_t aSensitiveKeysLength)
 {
     int ret;
 
@@ -220,7 +219,7 @@ void tyPlatSettingsInit(tyInstance *aInstance, const uint16_t *aSensitiveKeys, u
     }
 }
 
-tinyError tyPlatSettingsGet(tyInstance *aInstance, uint16_t aKey, int aIndex, uint8_t *aValue, uint16_t *aValueLength)
+tinyError tyPlatSettingsGet(uint16_t aKey, int aIndex, uint8_t *aValue, uint16_t *aValueLength)
 {
     int                        ret;
     char                       path[TY_SETTINGS_MAX_PATH_LEN];
@@ -249,7 +248,7 @@ tinyError tyPlatSettingsGet(tyInstance *aInstance, uint16_t aKey, int aIndex, ui
     return TY_ERROR_NONE;
 }
 
-tinyError tyPlatSettingsSet(tyInstance *aInstance, uint16_t aKey, const uint8_t *aValue, uint16_t aValueLength)
+tinyError tyPlatSettingsSet(uint16_t aKey, const uint8_t *aValue, uint16_t aValueLength)
 {
     int  ret;
     char path[TY_SETTINGS_MAX_PATH_LEN];
@@ -273,7 +272,7 @@ tinyError tyPlatSettingsSet(tyInstance *aInstance, uint16_t aKey, const uint8_t 
     return TY_ERROR_NONE;
 }
 
-tinyError tyPlatSettingsAdd(tyInstance *aInstance, uint16_t aKey, const uint8_t *aValue, uint16_t aValueLength)
+tinyError tyPlatSettingsAdd(uint16_t aKey, const uint8_t *aValue, uint16_t aValueLength)
 {
     int  ret;
     char path[TY_SETTINGS_MAX_PATH_LEN];
@@ -298,7 +297,7 @@ tinyError tyPlatSettingsAdd(tyInstance *aInstance, uint16_t aKey, const uint8_t 
     return TY_ERROR_NONE;
 }
 
-tinyError tyPlatSettingsDelete(tyInstance *aInstance, uint16_t aKey, int aIndex)
+tinyError tyPlatSettingsDelete(uint16_t aKey, int aIndex)
 {
     int ret;
 
@@ -316,14 +315,14 @@ tinyError tyPlatSettingsDelete(tyInstance *aInstance, uint16_t aKey, int aIndex)
     return TY_ERROR_NONE;
 }
 
-void tyPlatSettingsWipe(tyInstance *aInstance)
+void tyPlatSettingsWipe()
 {
     ARG_UNUSED(aInstance);
 
     (void)ty_setting_delete_subtree(-1, -1, true);
 }
 
-void tyPlatSettingsDeinit(tyInstance *aInstance)
+void tyPlatSettingsDeinit()
 {
     ARG_UNUSED(aInstance);
 }

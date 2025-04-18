@@ -54,14 +54,14 @@ exit:
 }
 #endif
 
-static tyError settingsFileInit(tyInstance *aInstance)
+static tyError settingsFileInit()
 {
     static constexpr size_t kMaxFileBaseNameSize = 32;
     char                    fileBaseName[kMaxFileBaseNameSize];
     const char             *offset = getenv("PORT_OFFSET");
     uint64_t                nodeId;
 
-    // tyPlatRadioGetIeeeEui64(aInstance, reinterpret_cast<uint8_t *>(&nodeId));
+    // tyPlatRadioGetIeeeEui64(reinterpret_cast<uint8_t *>(&nodeId));
     // nodeId = ty::BigEndian::HostSwap64(nodeId);
     nodeId = 0x1234567890abcdef;
     snprintf(fileBaseName, sizeof(fileBaseName), "%s_%" PRIx64, offset == nullptr ? "0" : offset, nodeId);
@@ -70,7 +70,7 @@ static tyError settingsFileInit(tyInstance *aInstance)
     return sSettingsFile.Init(fileBaseName);
 }
 
-void tyPlatSettingsInit(tyInstance *aInstance, const uint16_t *aSensitiveKeys, uint16_t aSensitiveKeysLength)
+void tyPlatSettingsInit(const uint16_t *aSensitiveKeys, uint16_t aSensitiveKeysLength)
 {
 #if !TY_POSIX_CONFIG_SECURE_SETTINGS_ENABLE
     TY_UNUSED_VARIABLE(aSensitiveKeys);
@@ -84,24 +84,22 @@ void tyPlatSettingsInit(tyInstance *aInstance, const uint16_t *aSensitiveKeys, u
 
     // Don't touch the settings file the system runs in dry-run mode.
     // VerifyOrExit(!IsSystemDryRun());
-    SuccessOrExit(settingsFileInit(aInstance));
+    SuccessOrExit(settingsFileInit());
 
 #if TY_POSIX_CONFIG_SECURE_SETTINGS_ENABLE
-    otPosixSecureSettingsInit(aInstance);
+    otPosixSecureSettingsInit();
 #endif
 
 exit:
     return;
 }
 
-void tyPlatSettingsDeinit(tyInstance *aInstance)
+void tyPlatSettingsDeinit()
 {
-    TY_UNUSED_VARIABLE(aInstance);
-
     // VerifyOrExit(!IsSystemDryRun());
 
 #if TY_POSIX_CONFIG_SECURE_SETTINGS_ENABLE
-    otPosixSecureSettingsDeinit(aInstance);
+    otPosixSecureSettingsDeinit();
 #endif
 
     sSettingsFile.Deinit();
@@ -110,17 +108,15 @@ void tyPlatSettingsDeinit(tyInstance *aInstance)
     //     return;
 }
 
-tyError tyPlatSettingsGet(tyInstance *aInstance, uint16_t aKey, int aIndex, uint8_t *aValue, uint16_t *aValueLength)
+tyError tyPlatSettingsGet(uint16_t aKey, int aIndex, uint8_t *aValue, uint16_t *aValueLength)
 {
-    TY_UNUSED_VARIABLE(aInstance);
-
     tyError error = TY_ERROR_NOT_FOUND;
 
     // VerifyOrExit(!IsSystemDryRun());
 #if TY_POSIX_CONFIG_SECURE_SETTINGS_ENABLE
     if (isSensitiveKey(aKey))
     {
-        error = otPosixSecureSettingsGet(aInstance, aKey, aIndex, aValue, aValueLength);
+        error = otPosixSecureSettingsGet(aKey, aIndex, aValue, aValueLength);
     }
     else
 #endif
@@ -133,16 +129,14 @@ tyError tyPlatSettingsGet(tyInstance *aInstance, uint16_t aKey, int aIndex, uint
     return error;
 }
 
-tyError tyPlatSettingsSet(tyInstance *aInstance, uint16_t aKey, const uint8_t *aValue, uint16_t aValueLength)
+tyError tyPlatSettingsSet(uint16_t aKey, const uint8_t *aValue, uint16_t aValueLength)
 {
-    TY_UNUSED_VARIABLE(aInstance);
-
     tyError error = TY_ERROR_NONE;
 
 #if TY_POSIX_CONFIG_SECURE_SETTINGS_ENABLE
     if (isSensitiveKey(aKey))
     {
-        error = otPosixSecureSettingsSet(aInstance, aKey, aValue, aValueLength);
+        error = otPosixSecureSettingsSet(aKey, aValue, aValueLength);
     }
     else
 #endif
@@ -153,16 +147,14 @@ tyError tyPlatSettingsSet(tyInstance *aInstance, uint16_t aKey, const uint8_t *a
     return error;
 }
 
-tyError tyPlatSettingsAdd(tyInstance *aInstance, uint16_t aKey, const uint8_t *aValue, uint16_t aValueLength)
+tyError tyPlatSettingsAdd(uint16_t aKey, const uint8_t *aValue, uint16_t aValueLength)
 {
-    TY_UNUSED_VARIABLE(aInstance);
-
     tyError error = TY_ERROR_NONE;
 
 #if TY_POSIX_CONFIG_SECURE_SETTINGS_ENABLE
     if (isSensitiveKey(aKey))
     {
-        error = otPosixSecureSettingsAdd(aInstance, aKey, aValue, aValueLength);
+        error = otPosixSecureSettingsAdd(aKey, aValue, aValueLength);
     }
     else
 #endif
@@ -173,16 +165,14 @@ tyError tyPlatSettingsAdd(tyInstance *aInstance, uint16_t aKey, const uint8_t *a
     return error;
 }
 
-tyError tyPlatSettingsDelete(tyInstance *aInstance, uint16_t aKey, int aIndex)
+tyError tyPlatSettingsDelete(uint16_t aKey, int aIndex)
 {
-    TY_UNUSED_VARIABLE(aInstance);
-
     tyError error;
 
 #if TY_POSIX_CONFIG_SECURE_SETTINGS_ENABLE
     if (isSensitiveKey(aKey))
     {
-        error = otPosixSecureSettingsDelete(aInstance, aKey, aIndex);
+        error = otPosixSecureSettingsDelete(aKey, aIndex);
     }
     else
 #endif
@@ -193,11 +183,10 @@ tyError tyPlatSettingsDelete(tyInstance *aInstance, uint16_t aKey, int aIndex)
     return error;
 }
 
-void tyPlatSettingsWipe(tyInstance *aInstance)
+void tyPlatSettingsWipe()
 {
-    TY_UNUSED_VARIABLE(aInstance);
 #if TY_POSIX_CONFIG_SECURE_SETTINGS_ENABLE
-    otPosixSecureSettingsWipe(aInstance);
+    otPosixSecureSettingsWipe();
 #endif
 
     sSettingsFile.Wipe();
@@ -206,10 +195,8 @@ void tyPlatSettingsWipe(tyInstance *aInstance)
 namespace ot {
 namespace Posix {
 #if TY_POSIX_CONFIG_SECURE_SETTINGS_ENABLE
-void PlatformSettingsGetSensitiveKeys(tyInstance *aInstance, const uint16_t **aKeys, uint16_t *aKeysLength)
+void PlatformSettingsGetSensitiveKeys(const uint16_t **aKeys, uint16_t *aKeysLength)
 {
-    TY_UNUSED_VARIABLE(aInstance);
-
     assert(aKeys != nullptr);
     assert(aKeysLength != nullptr);
 
@@ -238,10 +225,8 @@ const char *otExitCodeToString(uint8_t aExitCode)
     return "";
 }
 
-void tyPlatRadioGetIeeeEui64(tyInstance *aInstance, uint8_t *aIeeeEui64)
+void tyPlatRadioGetIeeeEui64(uint8_t *aIeeeEui64)
 {
-    TY_UNUSED_VARIABLE(aInstance);
-
     memset(aIeeeEui64, 0, sizeof(uint64_t));
 }
 

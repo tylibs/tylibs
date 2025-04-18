@@ -9,6 +9,7 @@
 #include <ty/logging.h>
 #include <ty/common/debug.hpp>
 
+#include "blecom_p.hpp"
 #include "ty/blecom/blecom.hpp"
 
 namespace ty {
@@ -32,8 +33,8 @@ auto BleCom::create(BleCom::Configuration &aConfiguration) -> etl::unique_ptr<Bl
 
 void BleCom::init()
 {
-    auto &self    = *(static_cast<BleComPlat *>(this));
-    self.d_ptr->x = 1;
+    auto &self = *(static_cast<BleComPlat *>(this));
+    self.d_func()->connect();
 }
 } // namespace ble
 } // namespace ty

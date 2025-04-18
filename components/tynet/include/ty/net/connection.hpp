@@ -6,7 +6,6 @@
 
 #include "tyconfig.h"
 
-#include "ty/instance.h"
 #include "ty/printable.hpp"
 
 #include "ty/net/network_interface.hpp"
