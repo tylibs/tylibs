@@ -4,6 +4,7 @@
 #ifndef TY_BLECOM_HPP_
 #define TY_BLECOM_HPP_
 
+#include <etl/exception.h>
 #include <etl/memory.h>
 #include <etl/string.h>
 
@@ -22,6 +23,7 @@ public:
     {
         const etl::string<31> &name;
     };
+
     // delete default and copy constructor
     BleCom()                    = delete;
     BleCom(const BleCom &other) = delete;
@@ -33,6 +35,7 @@ protected:
 
 public:
     static void    create(Configuration &);
+    void           start();
     void           init();
     static BleCom &get(void)
     {
@@ -46,6 +49,31 @@ protected:
 private:
     const Configuration &mConfiguration;
 };
+
+//***************************************************************************
+/// Base exception class for BLE communication.
+//***************************************************************************
+class BleComException : public etl::exception
+{
+public:
+    BleComException(string_type reason_, string_type file_name_, numeric_type line_number_)
+        : etl::exception(reason_, file_name_, line_number_)
+    {
+    }
+};
+
+//***************************************************************************
+/// Exception for BLE controller errors.
+//***************************************************************************
+class BleComControllerException : public ty::ble::BleComException
+{
+public:
+    BleComControllerException(string_type file_name_, numeric_type line_number_)
+        : ty::ble::BleComException(ETL_ERROR_TEXT("bt controller", "BLE1"), file_name_, line_number_)
+    {
+    }
+};
+
 } // namespace ble
 } // namespace ty
 

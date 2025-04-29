@@ -867,7 +867,6 @@ macro(project project_name)
   endif() # if(NOT DEFINED PROJECT_VER)
 
   message(STATUS "Building TYLIBS components for target ${TYLIBS_TARGET}")
-
   tylibs_build_process(
     ${TYLIBS_TARGET}
     TYCONFIG_DEFAULTS
@@ -939,6 +938,9 @@ macro(project project_name)
   add_custom_target(_project_elf_src DEPENDS "${project_elf_src}")
   add_executable(${project_elf} "${project_elf_src}")
   add_dependencies(${project_elf} _project_elf_src)
+
+  target_link_options(${project_elf} PRIVATE "-Wl,--print-memory-usage")
+  tylibs_build_set_property(LINK_OPTIONS "-Wl,--print-memory-usage" APPEND)
 
   if(__PROJECT_GROUP_LINK_COMPONENTS)
     target_link_libraries(${project_elf} PRIVATE "-Wl,--start-group")

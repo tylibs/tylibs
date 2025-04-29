@@ -28,6 +28,7 @@ BleCom *BleCom::sBleCom = nullptr;
 
 void BleCom::create(BleCom::Configuration &aConfiguration)
 {
+    // BleCom::sBleCom = new BleComPlat(aConfiguration);
     BleCom::sBleCom = new (&sBleComPlatRaw) BleComPlat(aConfiguration);
     // auto pImpl = etl::unique_ptr<BleCom>(New<BleComPlat>(MALLOC_CAP_INTERNAL, aConfiguration));
 }

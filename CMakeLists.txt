@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
 project(tylibs C CXX ASM)
-
 if(CMAKE_CURRENT_LIST_DIR STREQUAL CMAKE_SOURCE_DIR)
   message(
     FATAL_ERROR
@@ -17,7 +16,6 @@ tylibs_build_set_property(COMPILE_DEFINITIONS "${compile_definitions}" APPEND)
 tylibs_build_set_property(LINK_OPTIONS "${link_options}" APPEND)
 
 tylibs_build_get_property(build_component_targets __TY_BUILD_COMPONENT_TARGETS)
-
 # Add each component as a subdirectory, processing each component's
 # CMakeLists.txt
 foreach(component_target ${build_component_targets})
