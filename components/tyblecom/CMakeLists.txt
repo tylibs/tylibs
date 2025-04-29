@@ -34,6 +34,7 @@ if(CONFIG_TY_BLECOM)
     target_link_libraries(${COMPONENT_LIB} PRIVATE SDBusCpp::sdbus-c++)
     # target_link_options(${COMPONENT_LIB} PRIVATE "-Wl,--print-memory-usage")
   elseif(${target} STREQUAL "esp")
-    target_link_libraries(${COMPONENT_LIB} PRIVATE __idf_nvs_flash __idf_bt)
+    target_link_libraries(${COMPONENT_LIB} PRIVATE __idf_nvs_flash __idf_bt
+                                                   __idf_esp-nimble-cpp)
   endif()
 endif()

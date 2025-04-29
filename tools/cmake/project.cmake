@@ -10,9 +10,8 @@ elseif(${TYLIBS_TARGET} STREQUAL "esp")
   include($ENV{IDF_PATH}/tools/cmake/project.cmake)
   idf_build_set_property(MINIMAL_BUILD ON)
   list(APPEND EXTRA_COMPONENT_DIRS "esp")
-  # add this global sdkconfig
-  idf_build_get_property(test SDKCONFIG_DEFAULTS)
-  message(STATUS "SDKCONFIG_DEFAULTS: ${test}")
+  list(APPEND EXTRA_COMPONENT_DIRS
+       "$ENV{TYLIBS_PATH}/third_party/esp-nimble-cpp")
 else()
   message(ERROR_FATAL "no valid TYLIBS_TARGET given")
 endif()
