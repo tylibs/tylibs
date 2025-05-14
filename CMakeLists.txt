@@ -8,6 +8,8 @@ if(CMAKE_CURRENT_LIST_DIR STREQUAL CMAKE_SOURCE_DIR)
       "again.")
 endif()
 
+include(FetchContent)
+
 tylibs_build_set_property(COMPILE_OPTIONS "${compile_options}" APPEND)
 tylibs_build_set_property(C_COMPILE_OPTIONS "${c_compile_options}" APPEND)
 tylibs_build_set_property(CXX_COMPILE_OPTIONS "${cxx_compile_options}" APPEND)
