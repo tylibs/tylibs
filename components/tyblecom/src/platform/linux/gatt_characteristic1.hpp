@@ -6,7 +6,6 @@
 #include "gatt_descriptor1.hpp"
 #include "properties_ext_adaptor.hpp"
 #include "tyblecom-adaptor-glue.h"
-#include "tyblecom-proxy-glue.h"
 #include <sdbus-c++/Types.h>
 #include <sdbus-c++/sdbus-c++.h>
 
@@ -168,8 +167,8 @@ protected:
      *             org.bluez.Error.NotSupported
      *
      */
-    // void StartNotify(const std::map<std::string, Variant> &options) override;
     void StartNotify() override;
+    // void StartNotify(const std::map<std::string, Variant> &options) override;
 
     /**
      * This method will cancel any previous StartNotify
@@ -179,8 +178,8 @@ protected:
      *
      * Possible Errors: org.bluez.Error.Failed
      */
-    // void StopNotify(const std::map<std::string, Variant> &options) override;
     void StopNotify() override;
+    // void StopNotify(const std::map<std::string, Variant> &options) override;
 
     /**
      * This method doesn't expect a reply so it is just a

@@ -29,6 +29,7 @@
         <property name="Service" type="o" access="read"/>
         <property name="Value" type="ay" access="read"/>
         <property name="DirectedValue" type="a{hay}" access="read"/>
+        <!-- <property name="DirectedValue" type="a{oaay}" access="read"/> -->
         <property name="Notifying" type="b" access="read"/>
         <property name="Flags" type="as" access="read"/>
         <property name="Descriptors" type="ao" access="read"/>
@@ -54,10 +55,22 @@
             <arg name="fd" type="h" direction="out"/>
             <arg name="mtu" type="q" direction="out"/>
         </method>
-        <method name="StartNotify">
+        <method name="StartNotify"/>
             <!--<annotation name="org.freedesktop.DBus.Method.Async" value="server" />-->
-        </method>
         <method name="StopNotify"/>
         <method name="Confirm"/>
     </interface>
+    <!-- <interface name="org.freedesktop.DBus.ObjectManager"> -->
+    <!--     <method name="GetManagedObjects"> -->
+    <!--         <arg type="a{oa{sa{sv}}}" name="object_paths_interfaces_and_properties" direction="out"/> -->
+    <!--     </method> -->
+    <!--     <signal name="InterfacesAdded"> -->
+    <!--         <arg type="o" name="object_path"/> -->
+    <!--         <arg type="a{sa{sv}}" name="interfaces_and_properties"/> -->
+    <!--     </signal> -->
+    <!--     <signal name="InterfacesRemoved"> -->
+    <!--         <arg type="o" name="object_path"/> -->
+    <!--         <arg type="as" name="interfaces"/> -->
+    <!--     </signal> -->
+    <!-- </interface> -->
 </node>

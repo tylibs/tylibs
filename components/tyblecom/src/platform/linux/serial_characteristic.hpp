@@ -1,23 +1,24 @@
 // SPDX-FileCopyrightText: Copyright 2025 Clever Design (Switzerland) GmbH
 // SPDX-License-Identifier: Apache-2.0
-
 #pragma once
 
+#include "generic_characteristic.hpp"
+#include "util.hpp"
+#include <client.hpp>
+#include <device1.hpp>
 #include <gatt_characteristic_builder.hpp>
 
+#include <iostream>
 #include <queue>
 #include <set>
 
-#include "generic_characteristic.hpp"
-#include "bluez-dbus-cpp/Util.h"
+namespace org {
+namespace bluez {
 
-#include <spdlog/spdlog-inl.h>
-
-namespace org::bluez {
 class SerialClient : public Client
 {
 public:
-    SerialClient(const ObjectPath &path, const uint16_t usable_mtu, std::vector<uint8_t> &&initialValue)
+    SerialClient(sdbus::ObjectPath path, uint16_t usable_mtu, std::vector<uint8_t> &&initialValue)
         : Client{path, usable_mtu}
         , value_{initialValue}
     {
@@ -33,123 +34,128 @@ protected:
     std::vector<uint8_t> value_;
 };
 
-class SerialCharacteristic final : public GattCharacteristicBuilder<GenericCharacteristic>
+class SerialCharacteristic : public GattCharacteristicBuilder<GenericCharacteristic>
 {
 public:
-    SerialCharacteristic(const std::shared_ptr<GattService1> &service,
-                         std::shared_ptr<IConnection>         connection,
-                         const std::string                   &uuid)
-        : GattCharacteristicBuilder{service, uuid, false, false, true, true}
+    SerialCharacteristic(std::shared_ptr<GattService1> service,
+                         std::shared_ptr<IConnection>  connection,
+                         std::string                   uuid)
+        : GattCharacteristicBuilder{std::move(service), std::move(uuid), false, false, true, true}
         , connection_{std::move(connection)}
     {
         flags_ = {"notify", "write-without-response"};
     }
 
-    static SerialCharacteristic &create(const std::shared_ptr<GattService1> &service,
-                                        const std::shared_ptr<IConnection>  &connection,
-                                        const std::string                   &uuid)
+    static SerialCharacteristic &create(std::shared_ptr<GattService1> service,
+                                        std::shared_ptr<IConnection>  connection,
+                                        std::string                   uuid)
     {
-        const auto self = new SerialCharacteristic(service, connection, uuid);
+        auto self = new SerialCharacteristic(std::move(service), std::move(connection), std::move(uuid));
         return *self;
     }
 
 protected:
-    std::vector<uint8_t> ReadValue(const std::map<std::string, sdbus::Variant> &options) override
+    virtual std::vector<uint8_t> ReadValue(const std::map<std::string, sdbus::Variant> &options)
     {
-        spdlog::info("Serial RX: {}", std::string(value_.begin(), value_.end()));
-        ;
-        throw Error("org.bluez.Error.NotSupported",
-                    "'read' not supported on 'SerialCharacteristic', use 'notify' instead");
+        std::cerr << "Serial RX: " << std::string(value_.begin(), value_.end()) << std::endl;
+        throw sdbus::Error(sdbus::Error::Name("org.bluez.Error.NotSupported"),
+                           "'read' not supported on 'SerialCharacteristic', use 'notify' instead");
     }
 
-    void WriteValue(const std::vector<uint8_t> &value, const std::map<std::string, sdbus::Variant> &options) override
+    virtual void WriteValue(const std::vector<uint8_t> &value, const std::map<std::string, sdbus::Variant> &options)
     {
-        spdlog::info("Serial TX: {}", std::string(value.begin(), value.end()));
-        const auto client = getClient(options);
+        std::cout << "Serial TX: " << std::string(value.begin(), value.end()) << std::endl;
+        auto client = getClient(options);
         if (client == lastClient_)
         {
-            if (lastDevice_ && !value.empty() && value[0] == 'd')
+            if (lastDevice_ && value.size() > 0 && value[0] == 'd')
             {
-                spdlog::info("Disconnecting from client");
+                std::cout << "Disconnecting from client" << std::endl;
                 lastDevice_->Disconnect();
             }
         }
-        client->setData(value);
+        client->setData(std::move(value));
         Notify(client);
     }
 
-    void StartNotify(const std::map<std::string, sdbus::Variant> &options) override
-    {
-        // insert client into our list
-        const auto client = getClient(options);
-        notifying_.insert(client);
-        spdlog::info("SerialCharacteristic::StartNotify '{}'", client->getPath());
-    }
+    // // void StartNotify(const std::map<std::string, sdbus::Variant> &options) override
+    // void StartNotify() override
+    // {
+    //     // insert client into our list
+    //     auto client = getClient(options);
+    //     notifying_.insert(client);
+    //     std::cout << "SerialCharacteristic::StartNotify '" << client->getPath() << "'" << std::endl;
+    // }
 
-    void StopNotify(const std::map<std::string, sdbus::Variant> &options) override
-    {
-        // remove client from our list
-        if (!options.empty())
-        {
-            // When disconnecting from a device, StopNotify is called with an empty options map
-            const auto client = getClient(options);
-            const auto iter   = notifying_.find(client);
-            notifying_.erase(iter);
-            spdlog::info("SerialCharacteristic::StopNotify '{}'", client->getPath());
-        }
-    }
+    // // void StopNotify(const std::map<std::string, sdbus::Variant> &options) override
+    // void StopNotify() override
+    // {
+    //     // remove client from our list
+    //     if (options.size() != 0)
+    //     { // When disconnecting from device, StopNotify is called with an empty options map
+    //         auto client = getClient(options);
+    //         auto iter   = notifying_.find(client);
+    //         notifying_.erase(iter);
+    //         std::cout << "SerialCharacteristic::StopNotify '" << client->getPath() << "'" << std::endl;
+    //     }
+    // }
 
-    void Notify(const std::shared_ptr<SerialClient> &client)
+    void Notify(std::shared_ptr<SerialClient> client)
     {
-        // in this example, we always append a 'k' message to test the multi-packet aspect
+        // in this example we always append a 'k' message to test the multi-packet aspect
         // that is part of the 'DirectedValue' BlueZ patch rev2 feature
-        directedQueue_.insert(std::make_pair(
-            client->getPath(), std::vector<std::vector<uint8_t>>{client->getData(), std::vector<uint8_t>{'k'}}));
+        // directedQueue_.insert(std::make_pair(
+        //     client->getPath(), std::vector<std::vector<uint8_t>>{client->getData(), std::vector<uint8_t>{'k'}}));
 
         if (notifying_.find(client) != notifying_.end())
         {
-            emitPropertyChangedSignal("DirectedValue");
+            emitPropertyChangedSignal(PropertyName{"DirectedValue"});
         }
     }
 
-    std::map<ObjectPath, std::vector<std::vector<uint8_t>>> DirectedValue() override
+    std::map<sdbus::UnixFd, std::vector<uint8_t>> DirectedValue() override
     {
-        SPDLOG_TRACE("DirectedValue()");
+        std::cout << "DirectedValue()" << std::endl;
         return std::move(directedQueue_);
     }
 
-    std::shared_ptr<SerialClient> getClient(const std::map<std::string, Variant> &options)
+protected:
+    std::shared_ptr<SerialClient> getClient(const std::map<std::string, sdbus::Variant> &options)
     {
-        auto [real_mtu, usable_mtu] = Util::getMTUFromOptions(options);
+        uint16_t real_mtu, usable_mtu;
+        std::tie(real_mtu, usable_mtu) = Util::getMTUFromOptions(options);
 
         auto path = Util::getObjectPathFromOptions(options);
         auto iter = clients_.find(path);
         if (iter == clients_.end())
         {
-            spdlog::info("SerialCharacteristic::getClient - creating client '{}'", path);
+            std::cout << "SerialCharacteristic::getClient - creating client '" << path << "'" << std::endl;
             auto client = std::make_shared<SerialClient>(path, usable_mtu, std::vector<uint8_t>());
             iter        = clients_.insert(std::make_pair(path, client)).first;
             lastClient_ = iter->second;
-            lastDevice_ = std::make_shared<Device1>(*connection_, "org.bluez", path);
+            lastDevice_ = std::make_shared<Device1>(*connection_, ServiceName{"org.bluez"}, ObjectPath{path});
         }
         return iter->second;
     }
 
-    void removeClient(const std::map<std::string, Variant> &options)
+    void removeClient(const std::map<std::string, sdbus::Variant> &options)
     {
-        const auto path = Util::getObjectPathFromOptions(options);
-        if (const auto iter = clients_.find(path); iter != clients_.end())
+        auto path = Util::getObjectPathFromOptions(options);
+        auto iter = clients_.find(path);
+        if (iter != clients_.end())
         {
-            spdlog::info("SerialCharacteristic::removeClient '{}'", path);
+            std::cout << "SerialCharacteristic::removeClient '" << path << "'" << std::endl;
             clients_.erase(iter);
         }
     }
 
-    std::map<ObjectPath, std::vector<std::vector<uint8_t>>> directedQueue_;
-    std::map<ObjectPath, std::shared_ptr<SerialClient>>     clients_;
-    std::set<std::shared_ptr<SerialClient>>                 notifying_;
-    std::shared_ptr<SerialClient>                           lastClient_;
-    std::shared_ptr<Device1>                                lastDevice_;
-    std::shared_ptr<IConnection>                            connection_;
+    std::map<sdbus::UnixFd, std::vector<uint8_t>>              directedQueue_;
+    std::map<sdbus::ObjectPath, std::shared_ptr<SerialClient>> clients_;
+    std::set<std::shared_ptr<SerialClient>>                    notifying_;
+    std::shared_ptr<SerialClient>                              lastClient_;
+    std::shared_ptr<Device1>                                   lastDevice_;
+    std::shared_ptr<IConnection>                               connection_;
 };
-} // namespace org::bluez
+
+} // namespace bluez
+} // namespace org

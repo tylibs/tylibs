@@ -3,15 +3,23 @@
 
 #include "gatt_characteristic1.hpp"
 #include "gatt_service1.hpp"
+#include "tyblecom-adaptor-glue.h"
 
 #include <memory>
+#include <sdbus-c++/AdaptorInterfaces.h>
 #include <sdbus-c++/Types.h>
+#include <sdbus-c++/VTableItems.h>
 #include <set>
+#include <spdlog/pattern_formatter-inl.h>
 #include <stdexcept>
+#include "ty/logging.h"
 
-#include <spdlog/spdlog-inl.h>
+namespace {
+constexpr auto kTag = "GattChar1";
+}
 
 namespace org::bluez {
+
 static std::string makePath(const GattService1 &service)
 {
     std::string path{service.getPath()};
@@ -33,44 +41,7 @@ GattCharacteristic1::GattCharacteristic1(const std::shared_ptr<GattService1> &se
     , writeAcquired_{false}
     , notifyAcquired_{false}
 {
-    // if (hasAcquireWrite)
-    // {
-    //     getCharacteristicObject()
-    //         .registerMethod("AcquireWrite")
-    //         .onInterface(INTERFACE_NAME)
-    //         .implementedAs(
-    //             [this](const std::map<std::string, Variant> &options) { return this->AcquireWrite(options); });
-    //     getCharacteristicObject().registerProperty("WriteAcquired").onInterface(INTERFACE_NAME).withGetter([this] {
-    //         return this->WriteAcquired();
-    //     });
-    // }
-    // if (hasAcquireNotify)
-    // {
-    //     getCharacteristicObject()
-    //         .registerMethod("AcquireNotify")
-    //         .onInterface(INTERFACE_NAME)
-    //         .implementedAs(
-    //             [this](const std::map<std::string, Variant> &options) { return this->AcquireNotify(options); });
-    //     getCharacteristicObject().registerProperty("NotifyAcquired").onInterface(INTERFACE_NAME).withGetter([this] {
-    //         return this->NotifyAcquired();
-    //     });
-    // }
-    // if (hasValue)
-    // {
-    //     if (valueIsDirected)
-    //     {
-    //         getCharacteristicObject().registerProperty("DirectedValue").onInterface(INTERFACE_NAME).withGetter([this]
-    //         {
-    //             return this->DirectedValue();
-    //         });
-    //     }
-    //     else
-    //     {
-    //         getCharacteristicObject().registerProperty("Value").onInterface(INTERFACE_NAME).withGetter([this] {
-    //             return this->Value();
-    //         });
-    //     }
-    // }
+    tyLogInfo(kTag, "GattCharacteristic1::GattCharacteristic1() %s", path_.c_str());
 }
 
 GattCharacteristic1::~GattCharacteristic1()
@@ -148,18 +119,20 @@ std::tuple<UnixFd, uint16_t> GattCharacteristic1::AcquireNotify(const std::map<s
 }
 
 void GattCharacteristic1::StartNotify()
+// void GattCharacteristic1::StartNotify(const std::map<std::string, sdbus::Variant> &options)
 {
     notifyingSessions_ += 1;
 }
 
 void GattCharacteristic1::StopNotify()
+// void GattCharacteristic1::StopNotify(const std::map<std::string, sdbus::Variant> &options)
 {
     notifyingSessions_ -= 1;
 }
 
 void GattCharacteristic1::Confirm()
 {
-    spdlog::error("WARNING: Method 'GattCharacteristic1::Confirm' default handler");
+    tyLogCrit(kTag, "WARNING: Method 'GattCharacteristic1::Confirm' default handler");
 }
 
 // ---- for Friends ------------------------------------------------------------

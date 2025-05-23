@@ -49,8 +49,8 @@ public:
     }
 
     std::shared_ptr<LEAdvertisement1> registerWith(
-        std::shared_ptr<LEAdvertisingManager1>                 manager,
-        std::function<void(const std::optional<sdbus::Error>)> onRegistrationCallback = nullptr)
+        std::shared_ptr<LEAdvertisingManager1>           manager,
+        std::function<void(std::optional<sdbus::Error>)> onRegistrationCallback = nullptr)
     {
         // make sure we at least have "Type"
         if (!type_.length())
@@ -63,7 +63,6 @@ public:
 
         manager_ = std::move(manager);
 
-        // TODO: mg fix this
         if (onRegistrationCallback)
             manager_->RegisterAdvertisementAsync(getPath()).uponReplyInvoke(onRegistrationCallback);
         else

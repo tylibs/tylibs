@@ -23,13 +23,6 @@ public:
     {
     }
 
-    LEAdvertisingManager1(std::shared_ptr<sdbus::IConnection> connection,
-                          ServiceName                         destination,
-                          ObjectPath                          objectPath)
-        : proxy_{createProxy(*connection, std::move(destination), std::move(objectPath))}
-    {
-    }
-
     ~LEAdvertisingManager1() { proxy_->unregister(); }
 
 public:

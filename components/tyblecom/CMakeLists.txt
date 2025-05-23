@@ -40,6 +40,7 @@ if(CONFIG_TY_BLECOM)
       "src/platform/linux/gatt_characteristic1.cpp"
       "src/platform/linux/gatt_service1.cpp"
       "src/platform/linux/gatt_descriptor1.cpp"
+      "src/platform/linux/util.cpp"
       "src/platform/linux/tyblecom-proxy-glue.h"
       "src/platform/linux/tyblecom-adaptor-glue.h")
   elseif(${target} STREQUAL "esp")
