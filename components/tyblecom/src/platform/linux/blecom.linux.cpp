@@ -29,8 +29,7 @@
 constexpr const char *APP_PATH = "/org/bluez/byg";
 constexpr const char *ADV_PATH = "/org/bluez/byg/advertisement1";
 
-constexpr const char *NAME = "BYG";
-constexpr const char *TAG  = "BLECOM-LINUX";
+constexpr const char *TAG = "BLECOM-LINUX";
 
 constexpr auto BLUEZ_SERVICE = "org.bluez";
 constexpr auto DEVICE0       = "/org/bluez/hci0";
@@ -58,7 +57,7 @@ void BleCom::create(BleCom::Configuration &aConfiguration)
 
 void BleCom::start()
 {
-    // auto &self = *(static_cast<BleComPlat *>(this));
+    auto &self = *(static_cast<BleComPlat *>(this));
 
     std::shared_ptr<IConnection> connection{std::move(sdbus::createSystemBusConnection())};
     connection->requestName(sdbus::ServiceName{"org.bluez.byg"});
@@ -72,14 +71,15 @@ void BleCom::start()
         adapter1.Powered(true);
         adapter1.Discoverable(true);
         adapter1.Pairable(true);
-        adapter1.Alias(NAME);
+        adapter1.Alias(self.mConfiguration.name.c_str());
     }
     // ---- Services ---------------------------------------------------------------------------------------------------
     const org::bluez::GattManager1 gattMgr{connection, sdbus::ServiceName{BLUEZ_SERVICE}, sdbus::ObjectPath{DEVICE0}};
     auto       app = std::make_shared<org::bluez::GattApplication1>(connection, sdbus::ObjectPath{APP_PATH});
     const auto srv2 =
-        std::make_shared<org::bluez::GattService1>(app, "service0", "368a3edf-514e-4f70-ba8f-2d0a5a62bc8c");
-    org::bluez::SerialCharacteristic::create(srv2, connection, "de0a7b0c-358f-4cef-b778-8fe9abf09d53").finalize();
+        std::make_shared<org::bluez::GattService1>(app, "service0", "6e400001-b5a3-f393-e0a9-e50e24dcca9e");
+    org::bluez::SerialCharacteristic::create(srv2, connection, "6e400002-b5a3-f393-e0a9-e50e24dcca9e").finalize();
+    org::bluez::SerialCharacteristic::create(srv2, connection, "6e400003-b5a3-f393-e0a9-e50e24dcca9e").finalize();
 
     auto register_app_callback = [](std::optional<sdbus::Error> error) {
         tyLogInfo(TAG, "Registering app callback %s", ADV_PATH);
@@ -120,8 +120,8 @@ void BleCom::start()
     };
 
     auto ad = org::bluez::LEAdvertisement1::create(*connection, sdbus::ObjectPath{ADV_PATH})
-                  .withLocalName(NAME)
-                  .withServiceUUIDs(std::vector{std::string{"368a3edf-514e-4f70-ba8f-2d0a5a62bc8c"}})
+                  .withLocalName(self.mConfiguration.name.c_str())
+                  .withServiceUUIDs(std::vector{std::string{"6e400001-b5a3-f393-e0a9-e50e24dcca9e"}})
                   .withIncludes(std::vector{std::string{"tx-power"}})
                   .onReleaseCall([]() { tyLogInfo(TAG, "advertisement released"); })
                   .registerWith(mgr, register_adv_callback);

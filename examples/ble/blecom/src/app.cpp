@@ -24,7 +24,7 @@ namespace {
 
 void initBleCom()
 {
-    ty::ble::BleCom::Configuration bleConfig = {.name = "BYG"};
+    ty::ble::BleCom::Configuration bleConfig = {.name = "Be101:BYG Gateway"};
     ty::ble::BleCom::create(bleConfig);
     ty::ble::BleCom::get().init();
     try
