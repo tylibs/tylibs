@@ -25,8 +25,7 @@ struct BleComPlat : public BleCom
         : BleCom(aConfiguration)
     {
     }
-    NimBLEServer   *mServer;
-    etl::string<31> mDeviceName;
+    NimBLEServer *mServer;
 };
 static TY_DEFINE_ALIGNED_VAR(sBleComPlatRaw, sizeof(BleComPlat), uint64_t);
 BleCom *BleCom::sBleCom = nullptr;
@@ -39,22 +38,28 @@ void BleCom::create(BleCom::Configuration &aConfiguration)
 void BleCom::start()
 {
     auto &self = *(static_cast<BleComPlat *>(this));
-    NimBLEDevice::init("NimBLE-Client");
+    NimBLEDevice::init(self.mConfiguration.name);
     NimBLEDevice::setSecurityAuth(/*BLE_SM_PAIR_AUTHREQ_BOND | BLE_SM_PAIR_AUTHREQ_MITM |*/ BLE_SM_PAIR_AUTHREQ_SC);
-    self.mServer                              = NimBLEDevice::createServer();
-    NimBLEService        *pDeadService        = self.mServer->createService("DEAD");
-    NimBLECharacteristic *pBeefCharacteristic = pDeadService->createCharacteristic(
-        "BEEF", NIMBLE_PROPERTY::READ | NIMBLE_PROPERTY::WRITE |
-                    /** Require a secure connection for read and write access */
-                    NIMBLE_PROPERTY::READ_ENC | // only allow reading if paired / encrypted
-                    NIMBLE_PROPERTY::WRITE_ENC  // only allow writing if paired / encrypted
+    self.mServer                = NimBLEDevice::createServer();
+    NimBLEService *pDeadService = self.mServer->createService(etl::string<36>{"6e400001-b5a3-f393-e0a9-e50e24dcca9e"});
+    NimBLECharacteristic *pRxCharacteristic = pDeadService->createCharacteristic(
+        etl::string<36>{"6e400002-b5a3-f393-e0a9-e50e24dcca9e"}, NIMBLE_PROPERTY::READ
+        /** Require a secure connection for read and write access */
+        // NIMBLE_PROPERTY::READ_ENC | // only allow reading if paired / encrypted
+        // NIMBLE_PROPERTY::WRITE_ENC  // only allow writing if paired / encrypted
     );
+    NimBLECharacteristic *pTxCharacteristic = pDeadService->createCharacteristic(
+        etl::string<36>{"6e400003-b5a3-f393-e0a9-e50e24dcca9e"}, NIMBLE_PROPERTY::WRITE);
+    tyLogInfo("core", "BLE Char created %s", pTxCharacteristic->toString().c_str());
+    tyLogInfo("core", "BLE Char created %s", pRxCharacteristic->toString().c_str());
 
-    pBeefCharacteristic->setValue("Burger");
-    // pBeefCharacteristic->setCallbacks(&chrCallbacks);
+    pRxCharacteristic->setValue("Hello");
+    pDeadService->start();
+    tyLogInfo("core", "BLE Service started: %s", pDeadService->toString().c_str());
+    // pRxCharacteristic->setCallbacks(&chrCallbacks);
     /** Create an advertising instance and add the services to the advertised data */
     NimBLEAdvertising *pAdvertising = NimBLEDevice::getAdvertising();
-    pAdvertising->setName(self.mConfiguration.name.c_str());
+    pAdvertising->setName(self.mConfiguration.name);
     pAdvertising->addServiceUUID(pDeadService->getUUID());
     /**
      *  If your device is battery powered you may consider setting scan response
@@ -62,6 +67,7 @@ void BleCom::start()
      */
     pAdvertising->enableScanResponse(true);
     pAdvertising->start();
+    tyLogInfo("core", "BLE Adv started: %s", pAdvertising->getAdvertisementData().toString().c_str());
 }
 void BleCom::init()
 {

@@ -9,4 +9,4 @@
 	url = https://github.com/ETLCPP/etl.git
 [submodule "third_party/esp-nimble-cpp"]
 	path = third_party/esp-nimble-cpp
-	url = https://github.com/h2zero/esp-nimble-cpp
+	url = git@github.com:marcel-cd/esp-nimble-cpp.git

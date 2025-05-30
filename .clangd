@@ -1,9 +1,4 @@
 CompileFlags:
-  Remove:
-    [
-      -fno-shrink-wrap,
-      -mlongcalls,
-      -fno-tree-switch-conversion,
-      -fstrict-volatile-bitfields,
-      -mtext-section-literals,
-    ]
+  CompilationDatabase: build
+  Remove: [-m*, -f*]
+  Add: [-std=c++20]
